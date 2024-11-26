@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 # Define the path to the folder containing the CSV files
-data_folder = 'data/CSpine/CSV datasets'
+data_folder = '../data/CSpine/CSV datasets'
 
 # List all CSV files in the folder
 csv_files = [f for f in os.listdir(data_folder) if f.endswith('.csv')]
@@ -33,6 +33,6 @@ for csv_file in csv_files:
         merged_df = merged_df.loc[:, ~merged_df.columns.duplicated()]
 
 # Save the merged dataframe to a new CSV file
-merged_df.to_csv('merged_data.csv', index=False)
+merged_df.to_csv('../data/merged_data.csv', index=False)
 
 print("Merged CSV saved as 'merged_data.csv'.")
