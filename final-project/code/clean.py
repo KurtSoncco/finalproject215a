@@ -41,9 +41,9 @@ print("Merged CSV saved as 'merged_data.csv'.")
 
 # Analysis variables
 def clean_analysis(df_analysis):
-
-
-
+    
+    # Fill missing values with 0
+    df_analysis.fillna(0, inplace=True)
 
     return df_analysis
 
