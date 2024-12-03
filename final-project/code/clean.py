@@ -37,8 +37,6 @@ merged_df.to_csv('../data/merged_data.csv', index=False)
 
 print("Merged CSV saved as 'merged_data.csv'.")
 
-
-
 # Cleaning by Kurt
 
 # Analysis variables
@@ -104,3 +102,32 @@ def clean_outside(df_outside):
     df_outside.drop(columns=["totalgcsmanual", "sectiongcsavailable", "totalgcsavailable", "gcseye", "verbalgcs", "motorgcs"], inplace=True)
 
     return df_outside
+
+
+# Creating the target data
+
+def create_target(df_analysis, df_injuryclassification):
+
+    # Convert the columns of CSFractures to True and False
+    A = df_injuryclassification["CSFractures"].apply(lambda x: True if x == "Y" else False)
+    B = df_injuryclassification["Ligamentoptions"].apply(lambda x: True if x == "Y" else False)
+
+    # Create a new column with the logical OR of the two columns
+    df_injuryclassification["CSI"] = A | B
+
+    # Merge the two dataframes on the column "StudySubjectID"
+    df_target = pd.merge(df_analysis, df_injuryclassification, on="StudySubjectID", how="left")
+
+    # Only consider the columns "StudySubjectID" and "CSI"
+    df_target = df_target[["StudySubjectID", "CSI"]]
+
+    # Fill the NaN values with False
+    df_target["CSFractures"] = df_target["CSFractures"].fillna(False)
+
+    # Rename the column "CSFractures" to "CSI"
+    df_target.rename(columns={"CSFractures": "CSI"}, inplace=True)
+
+    # Export the dataframe to a CSV file
+    df_target.to_csv("../data/target_data.csv", index=False)
+
+    return df_target
