@@ -36,3 +36,71 @@ for csv_file in csv_files:
 merged_df.to_csv('../data/merged_data.csv', index=False)
 
 print("Merged CSV saved as 'merged_data.csv'.")
+
+
+
+# Cleaning by Kurt
+
+# Analysis variables
+def clean_analysis(df_analysis):
+
+
+
+
+    return df_analysis
+
+
+
+# Clinical on Field
+
+def clean_onfield(df_field):
+    # Change "YES" to 1 and everything else to 0
+    df_field.loc[:, "pttenderneckothertxtcat"] = df_field["pttenderneckothertxtcat"].apply(lambda x: 1 if x == "YES" else 0)
+    df_field.loc[:, "otherneurodeficitdesccat"] = df_field["otherneurodeficitdesccat"].apply(lambda x: 1 if x == "YES" else 0)
+
+    # Change "ALTERED" to 1 and everything else to 0
+    df_field.loc[:, "avpumentaltxtcat"] = df_field["avpumentaltxtcat"].apply(lambda x: 1 if x == "ALTERED" else 0)
+
+    # If avpumental is U, change tthe column of avpudetails to U
+    df_field.loc[df_field["avpumental"] == "U", "avpudetails"] = "U"
+
+    # Change "OTH" to 1 and everything else to 0
+    df_field.loc[:, "avpumental"] = df_field["avpumental"].apply(lambda x: 1 if x == "OTH" else 0)
+
+    # Eliminate all columns with txt at end
+    df_field = df_field.loc[:, ~df_field.columns.str.endswith("txt")]
+    df_field = df_field.loc[:, ~df_field.columns.str.endswith("desc")]
+
+    # Since we are interested on loss of consciousness, we will join the manual and total GCS values
+    df_field.loc[df_field["totalgcsavailable"] =="Y", "totalgcs"] = df_field[df_field["totalgcsavailable"] =="Y"]["totalgcsmanual"]
+    df_field.drop(columns=["totalgcsmanual", "sectiongcsavailable", "totalgcsavailable", "gcseye", "verbalgcs", "motorgcs"], inplace=True)
+
+    return df_field
+
+
+# Clinical Outside
+
+def clean_outside(df_outside):
+    # Change "YES" to 1 and everything else to 0
+    df_outside.loc[:, "pttenderneckothertxtcat"] = df_outside["pttenderneckothertxtcat"].apply(lambda x: 1 if x == "YES" else 0)
+    df_outside.loc[:, "otherneurodeficitdesccat"] = df_outside["otherneurodeficitdesccat"].apply(lambda x: 1 if x == "YES" else 0)
+
+    # Change "ALTERED" to 1 and everything else to 0
+    df_outside.loc[:, "avpumentaltxtcat"] = df_outside["avpumentaltxtcat"].apply(lambda x: 1 if x == "ALTERED" else 0)
+
+    # If avpumental is U, change tthe column of avpudetails to U
+    df_outside.loc[df_outside["avpumental"] == "U", "avpudetails"] = "U"
+
+    # Change "OTH" to 1 and everything else to 0
+    df_outside.loc[:, "avpumental"] = df_outside["avpumental"].apply(lambda x: 1 if x == "OTH" else 0)
+
+
+    # Eliminate all columns with txt at end
+    df_outside = df_outside.loc[:, ~df_outside.columns.str.endswith("txt")]
+    df_outside = df_outside.loc[:, ~df_outside.columns.str.endswith("desc")]
+
+    # Since we are interested on loss of consciousness, we will join the manual and total GCS values
+    df_outside.loc[df_outside["totalgcsavailable"] =="Y", "totalgcs"] = df_outside[df_outside["totalgcsavailable"] =="Y"]["totalgcsmanual"]
+    df_outside.drop(columns=["totalgcsmanual", "sectiongcsavailable", "totalgcsavailable", "gcseye", "verbalgcs", "motorgcs"], inplace=True)
+
+    return df_outside
