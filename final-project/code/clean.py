@@ -132,6 +132,175 @@ def create_target(df_analysis, df_injuryclassification):
 
     return df_target
 
+# cleaning by jacob
+
+def binarize(df):
+    for cols in df.columns:
+        if 'Y' in list(df[cols].unique()) and 'N' in list(df[cols].unique()):
+            print(cols)
+            df[cols] = df[cols].replace('Y', 1)
+            df[cols] = df[cols].replace('N', 0)
+    return df
+
+
+def clean_clinical_site(clinical):
+    # threshold for dropping columns with excessive missing data
+    threshold = 80.0
+    
+    # drop columns w/ missing above threshold
+    clinical_cleaned = clinical.loc[:, (clinical.isnull().mean() * 100) <= threshold]
+    
+    # imputing missing values with mode
+    for col in clinical_cleaned.select_dtypes(include=['object', 'category']):
+        clinical_cleaned[col].fillna(clinical_cleaned[col].mode()[0], inplace=True)
+
+    # imputing missing values with median
+    for col in clinical_cleaned.select_dtypes(include=['float64', 'int64']):
+        clinical_cleaned[col].fillna(clinical_cleaned[col].median(), inplace=True)
+
+    df = clinical_cleaned.drop(columns=["ArrivalDate","ArrivalTime", "ArrivalTimeND", "ModeArrival"])
+
+    binarize(df)
+
+    # GCSEye
+    eye_mapping = {
+            1 : np.nan,
+            2 : "Pain",
+            3 : "Verbal",
+            4 : "Spontaneous"
+    }
+    df.GCSEye = df.GCSEye.map(eye_mapping)
+    
+    # VerbalGCS
+    verbal_mapping = {
+            1 : np.nan,
+            2 : "Incomprehensible sounds - moans",
+            3 : "Inappropriate words - cries to pain",
+            4 : "Confused - irritable/cries",
+            5 : "Oriented - coos/babbles"
+    }
+    df.VerbalGCS = df.VerbalGCS.map(verbal_mapping)
+    
+    # LocEvalPhysician
+    loc_mapping = {
+            1 : "ED",
+            2 : "ICU",
+            3 : "General floor",
+            4 : "Outpatient Clinic",
+            5 : "Other"
+    }
+    df.LocEvalPhysician = df.LocEvalPhysician.map(loc_mapping) 
+    
+    # CervicalSpineImmobilization
+    immobilization_mapping = {
+            1 : 1,
+            2 : 1,
+            3 : 0
+    }
+    df.CervicalSpineImmobilization = df.CervicalSpineImmobilization.map(immobilization_mapping)
+        
+    # IntubatedSS
+    intubated_mapping = {
+            "Y" : 1,
+            "NOTUB" : 0,
+            "INTUB" : "Intubation continued",
+            "EXTUB" : "Extubated"
+    }
+    df.IntubatedSS = df.IntubatedSS.map(intubated_mapping)
+        
+    # CSpinePrecautions
+    cspine_mapping = {
+            "YD" : 1,
+            "N" : 0,
+            "YND" : "ND"
+    }
+    df.CSpinePrecautions = df.CSpinePrecautions.map(cspine_mapping)
+    
+    # PtSensoryLoss
+    sensory_mapping = {
+            1 : 1,
+            0 : 0,
+            "3" : "S",
+            "ND" : "ND"
+    }
+    df.PtSensoryLoss = df.PtSensoryLoss.map(sensory_mapping)
+        
+    # PtParesthesias
+    paresthesias_mapping = {
+            1 : 1,
+            0 : 0,
+            "3" : "S",
+            "ND" : "ND"
+    }
+    df.PtParesthesias = df.PtParesthesias.map(paresthesias_mapping)
+        
+    # LimitedRangeMotion
+    range_mapping = {
+            1 : 1,
+            0 : 0,
+            "3" : "S",
+            "4" : "C-collar in place",
+            "NA" : "NA",
+            "ND" : "ND"
+    }
+    df.LimitedRangeMotion = df.LimitedRangeMotion.map(range_mapping)    
+    
+    # MotorGCS
+    motor_mapping = {
+            1 : np.nan,
+            2 : "Abnormal extension posturing",
+            3 : "Abnormal flexure posturing",
+            4 : "Withdraws to pain",
+            5 : "Localizes pain [withdraws to touch]",
+            6 : "Follow Commands"
+    } 
+    df.MotorGCS = df.MotorGCS.map(motor_mapping)
+
+    for col in df.select_dtypes(include=['object', 'category']):
+        df[col].fillna(df[col].mode()[0], inplace=True)
+
+    for col in df.select_dtypes(include=['float64', 'int64']):
+        df[col].fillna(df[col].median(), inplace=True)
+
+    return df
+
+def clean_demo(demo):
+    # threshold for dropping columns with excessive missing data
+    threshold = 80.0
+    
+    # drop columns w/ missing above threshold
+    demo_cleaned = demo.loc[:, (demo.isnull().mean() * 100) <= threshold]
+
+    # imputing missing values with mode
+    for col in demo_cleaned.select_dtypes(include=['object', 'category']):
+        demo_cleaned[col].fillna(demo_cleaned[col].mode()[0], inplace=True)
+
+    # imputing missing values with median
+    for col in demo_cleaned.select_dtypes(include=['float64', 'int64']):
+        demo_cleaned[col].fillna(demo_cleaned[col].median(), inplace=True)
+
+    binarize(demo_cleaned)
+
+    return demo_cleaned
+
+def clean_injuryclass(injury_class):
+    # threshold for dropping columns with excessive missing data
+    threshold = 80.0
+    
+    # drop columns w/ missing above threshold
+    injury_class_cleaned = injury_class.loc[:, (injury_class.isnull().mean() * 100) <= threshold]
+    
+    # imputing missing values with mode
+    for col in injury_class_cleaned.select_dtypes(include=['object', 'category']):
+        injury_class_cleaned[col].fillna(injury_class_cleaned[col].mode()[0], inplace=True)
+
+    # imputing missing values with median
+    for col in injury_class_cleaned.select_dtypes(include=['float64', 'int64']):
+        injury_class_cleaned[col].fillna(injury_class_cleaned[col].median(), inplace=True)
+
+    binarize(injury_class_cleaned)
+
+    return injury_class_cleaned
 
 #
 
