@@ -301,3 +301,34 @@ def clean_injuryclass(injury_class):
     binarize(injury_class_cleaned)
 
     return injury_class_cleaned
+
+# Saving the cleaned data in processed data_csv
+
+def save_cleaned_data():
+
+    df_analysis = pd.read_csv("../data/CSpine/CSV datasets/raw data/analysisvariables.csv")
+    df_field = pd.read_csv("../data/CSpine/CSV datasets/raw data/clinicalonfield.csv")
+    df_outside = pd.read_csv("../data/CSpine/CSV datasets/raw data/clinicaloutside.csv")
+    df_injuryclassification = pd.read_csv("../data/CSpine/CSV datasets/raw data/injuryclassification.csv")
+
+    # Clean the analysis data
+    df_analysis_cleaned = clean_analysis(df_analysis)
+
+    # Clean the on-field data
+    df_field_cleaned = clean_onfield(df_field)
+
+    # Clean the outside data
+    df_outside_cleaned = clean_outside(df_outside)
+
+    # Create the target data
+    df_target_cleaned = create_target(df_analysis_cleaned, df_injuryclassification)
+
+    # Save the cleaned data to CSV files
+    df_analysis_cleaned.to_csv("../data/processed data/analysis_cleaned.csv", index=False)
+    df_field_cleaned.to_csv("../data/processed data/field_cleaned.csv", index=False)
+    df_outside_cleaned.to_csv("../data/processed data/outside_cleaned.csv", index=False)
+    df_target_cleaned.to_csv("../data/processed data/target_cleaned.csv", index=False)
+
+    print("Cleaned data saved successfully.")
+
+
