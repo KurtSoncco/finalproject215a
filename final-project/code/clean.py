@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 
 # Define the path to the folder containing the CSV files
 data_folder = '../data/CSpine/CSV datasets'
@@ -134,6 +135,37 @@ def create_target(df_analysis, df_injuryclassification):
 
 # cleaning by jacob
 
+def standardize(df):
+    # Make sure every dataset has the same column "StudySubjectID"
+    if "StudySubjectID" not in df.columns:
+        if "studysubjectid" in df.columns.str.lower():
+            df.rename(columns={"studysubjectid": "StudySubjectID"}, inplace=True)
+            # Change the type to int
+            df["StudySubjectID"] = df["StudySubjectID"].astype(int)
+
+    # Also check "SITE","CaseID","ControlType"
+    if "SITE" not in df.columns:
+        print("SITE not in columns")
+        print(df.columns)
+        if "site" in df.columns.str.lower():
+            print("SITE is in columns but with different case")
+            df.rename(columns={"site": "SITE"}, inplace=True)
+            df["SITE"] = df["SITE"].astype(int)
+    if "CaseID" not in df.columns:
+        print("CaseID not in columns")
+        print(df.columns)
+        if "caseid" in df.columns.str.lower():
+            print("CaseID is in columns but with different case")
+            df.rename(columns={"caseid": "CaseID"}, inplace=True)
+            df["CaseID"] = df["CaseID"].astype(int)
+    if "ControlType" not in df.columns:
+        print("ControlType not in columns")
+        print(df.columns)
+        if "controltype" in df.columns.str.lower():
+            print("ControlType is in columns but with different case")
+            df.rename(columns={"controltype": "ControlType"}, inplace=True)
+    return df
+
 def binarize(df):
     for cols in df.columns:
         if 'Y' in list(df[cols].unique()) and 'N' in list(df[cols].unique()):
@@ -149,18 +181,10 @@ def clean_clinical_site(clinical):
     
     # drop columns w/ missing above threshold
     clinical_cleaned = clinical.loc[:, (clinical.isnull().mean() * 100) <= threshold]
-    
-    # imputing missing values with mode
-    for col in clinical_cleaned.select_dtypes(include=['object', 'category']):
-        clinical_cleaned[col].fillna(clinical_cleaned[col].mode()[0], inplace=True)
-
-    # imputing missing values with median
-    for col in clinical_cleaned.select_dtypes(include=['float64', 'int64']):
-        clinical_cleaned[col].fillna(clinical_cleaned[col].median(), inplace=True)
 
     df = clinical_cleaned.drop(columns=["ArrivalDate","ArrivalTime", "ArrivalTimeND", "ModeArrival"])
 
-    binarize(df)
+    df = binarize(df)
 
     # GCSEye
     eye_mapping = {
@@ -194,7 +218,7 @@ def clean_clinical_site(clinical):
     # CervicalSpineImmobilization
     immobilization_mapping = {
             1 : 1,
-            2 : 1,
+            2 : np.nan,
             3 : 0
     }
     df.CervicalSpineImmobilization = df.CervicalSpineImmobilization.map(immobilization_mapping)
@@ -212,7 +236,7 @@ def clean_clinical_site(clinical):
     cspine_mapping = {
             "YD" : 1,
             "N" : 0,
-            "YND" : "ND"
+            "YND" : np.nan
     }
     df.CSpinePrecautions = df.CSpinePrecautions.map(cspine_mapping)
     
@@ -221,7 +245,7 @@ def clean_clinical_site(clinical):
             1 : 1,
             0 : 0,
             "3" : "S",
-            "ND" : "ND"
+            "ND" : np.nan
     }
     df.PtSensoryLoss = df.PtSensoryLoss.map(sensory_mapping)
         
@@ -230,7 +254,7 @@ def clean_clinical_site(clinical):
             1 : 1,
             0 : 0,
             "3" : "S",
-            "ND" : "ND"
+            "ND" : np.nan
     }
     df.PtParesthesias = df.PtParesthesias.map(paresthesias_mapping)
         
@@ -241,7 +265,7 @@ def clean_clinical_site(clinical):
             "3" : "S",
             "4" : "C-collar in place",
             "NA" : "NA",
-            "ND" : "ND"
+            "ND" : np.nan
     }
     df.LimitedRangeMotion = df.LimitedRangeMotion.map(range_mapping)    
     
@@ -256,12 +280,6 @@ def clean_clinical_site(clinical):
     } 
     df.MotorGCS = df.MotorGCS.map(motor_mapping)
 
-    for col in df.select_dtypes(include=['object', 'category']):
-        df[col].fillna(df[col].mode()[0], inplace=True)
-
-    for col in df.select_dtypes(include=['float64', 'int64']):
-        df[col].fillna(df[col].median(), inplace=True)
-
     return df
 
 def clean_demo(demo):
@@ -271,15 +289,7 @@ def clean_demo(demo):
     # drop columns w/ missing above threshold
     demo_cleaned = demo.loc[:, (demo.isnull().mean() * 100) <= threshold]
 
-    # imputing missing values with mode
-    for col in demo_cleaned.select_dtypes(include=['object', 'category']):
-        demo_cleaned[col].fillna(demo_cleaned[col].mode()[0], inplace=True)
-
-    # imputing missing values with median
-    for col in demo_cleaned.select_dtypes(include=['float64', 'int64']):
-        demo_cleaned[col].fillna(demo_cleaned[col].median(), inplace=True)
-
-    binarize(demo_cleaned)
+    demo_cleaned = binarize(demo_cleaned)
 
     return demo_cleaned
 
@@ -289,16 +299,8 @@ def clean_injuryclass(injury_class):
     
     # drop columns w/ missing above threshold
     injury_class_cleaned = injury_class.loc[:, (injury_class.isnull().mean() * 100) <= threshold]
-    
-    # imputing missing values with mode
-    for col in injury_class_cleaned.select_dtypes(include=['object', 'category']):
-        injury_class_cleaned[col].fillna(injury_class_cleaned[col].mode()[0], inplace=True)
 
-    # imputing missing values with median
-    for col in injury_class_cleaned.select_dtypes(include=['float64', 'int64']):
-        injury_class_cleaned[col].fillna(injury_class_cleaned[col].median(), inplace=True)
-
-    binarize(injury_class_cleaned)
+    injury_class_cleaned = binarize(injury_class_cleaned)
 
     return injury_class_cleaned
 
@@ -310,6 +312,14 @@ def save_cleaned_data():
     df_field = pd.read_csv("../data/CSpine/CSV datasets/raw data/clinicalonfield.csv")
     df_outside = pd.read_csv("../data/CSpine/CSV datasets/raw data/clinicaloutside.csv")
     df_injuryclassification = pd.read_csv("../data/CSpine/CSV datasets/raw data/injuryclassification.csv")
+    
+    df_clinicalsite = pd.read_csv("../data/CSpine/CSV datasets/clinicalpresentationsite.csv")
+    df_demo = pd.read_csv("../data/CSpine/CSV datasets/demographics.csv")
+    df_injury_class = pd.read_csv("../data/CSpine/CSV datasets/injuryclassification.csv")
+    
+    df_clinicalsite = standardize(df_clinicalsite)
+    df_demo = standardize(df_demo)
+    df_injury_class = standardize(df_injury_class)
 
     # Clean the analysis data
     df_analysis_cleaned = clean_analysis(df_analysis)
@@ -322,12 +332,26 @@ def save_cleaned_data():
 
     # Create the target data
     df_target_cleaned = create_target(df_analysis_cleaned, df_injuryclassification)
+    
+    # Clean the Clinical Site data
+    df_clinicalsite_cleaned = clean_clinical_site(df_clinicalsite)
+    
+    # Clean the Demographics data
+    df_demo_cleaned = clean_demo(df_demo)
+    
+    # Clean the Injury class data
+    df_injury_class_cleaned = clean_injuryclass(df_injury_class)
 
     # Save the cleaned data to CSV files
     df_analysis_cleaned.to_csv("../data/processed data/analysis_cleaned.csv", index=False)
     df_field_cleaned.to_csv("../data/processed data/field_cleaned.csv", index=False)
     df_outside_cleaned.to_csv("../data/processed data/outside_cleaned.csv", index=False)
     df_target_cleaned.to_csv("../data/processed data/target_cleaned.csv", index=False)
+    
+    df_clinicalsite_cleaned.to_csv("../data/processed data/clinicalsite_cleaned.csv", index=False)
+    df_demo_cleaned.to_csv("../data/processed data/demo_cleaned.csv", index=False)
+    df_injury_class_cleaned.to_csv("../data/processed data/injury_class_cleaned.csv", index=False)
+    
 
     print("Cleaned data saved successfully.")
 

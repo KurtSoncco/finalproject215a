@@ -149,14 +149,6 @@ def clean_clinical_site(clinical):
     
     # drop columns w/ missing above threshold
     clinical_cleaned = clinical.loc[:, (clinical.isnull().mean() * 100) <= threshold]
-    
-    # imputing missing values with mode
-    for col in clinical_cleaned.select_dtypes(include=['object', 'category']):
-        clinical_cleaned[col].fillna(clinical_cleaned[col].mode()[0], inplace=True)
-
-    # imputing missing values with median
-    for col in clinical_cleaned.select_dtypes(include=['float64', 'int64']):
-        clinical_cleaned[col].fillna(clinical_cleaned[col].median(), inplace=True)
 
     df = clinical_cleaned.drop(columns=["ArrivalDate","ArrivalTime", "ArrivalTimeND", "ModeArrival"])
 
@@ -194,7 +186,7 @@ def clean_clinical_site(clinical):
     # CervicalSpineImmobilization
     immobilization_mapping = {
             1 : 1,
-            2 : 1,
+            2 : np.nan,
             3 : 0
     }
     df.CervicalSpineImmobilization = df.CervicalSpineImmobilization.map(immobilization_mapping)
@@ -212,7 +204,7 @@ def clean_clinical_site(clinical):
     cspine_mapping = {
             "YD" : 1,
             "N" : 0,
-            "YND" : "ND"
+            "YND" : np.nan
     }
     df.CSpinePrecautions = df.CSpinePrecautions.map(cspine_mapping)
     
@@ -221,7 +213,7 @@ def clean_clinical_site(clinical):
             1 : 1,
             0 : 0,
             "3" : "S",
-            "ND" : "ND"
+            "ND" : np.nan
     }
     df.PtSensoryLoss = df.PtSensoryLoss.map(sensory_mapping)
         
@@ -230,7 +222,7 @@ def clean_clinical_site(clinical):
             1 : 1,
             0 : 0,
             "3" : "S",
-            "ND" : "ND"
+            "ND" : np.nan
     }
     df.PtParesthesias = df.PtParesthesias.map(paresthesias_mapping)
         
@@ -241,7 +233,7 @@ def clean_clinical_site(clinical):
             "3" : "S",
             "4" : "C-collar in place",
             "NA" : "NA",
-            "ND" : "ND"
+            "ND" : np.nan
     }
     df.LimitedRangeMotion = df.LimitedRangeMotion.map(range_mapping)    
     
@@ -256,12 +248,6 @@ def clean_clinical_site(clinical):
     } 
     df.MotorGCS = df.MotorGCS.map(motor_mapping)
 
-    for col in df.select_dtypes(include=['object', 'category']):
-        df[col].fillna(df[col].mode()[0], inplace=True)
-
-    for col in df.select_dtypes(include=['float64', 'int64']):
-        df[col].fillna(df[col].median(), inplace=True)
-
     return df
 
 def clean_demo(demo):
@@ -270,14 +256,6 @@ def clean_demo(demo):
     
     # drop columns w/ missing above threshold
     demo_cleaned = demo.loc[:, (demo.isnull().mean() * 100) <= threshold]
-
-    # imputing missing values with mode
-    for col in demo_cleaned.select_dtypes(include=['object', 'category']):
-        demo_cleaned[col].fillna(demo_cleaned[col].mode()[0], inplace=True)
-
-    # imputing missing values with median
-    for col in demo_cleaned.select_dtypes(include=['float64', 'int64']):
-        demo_cleaned[col].fillna(demo_cleaned[col].median(), inplace=True)
 
     binarize(demo_cleaned)
 
@@ -289,14 +267,6 @@ def clean_injuryclass(injury_class):
     
     # drop columns w/ missing above threshold
     injury_class_cleaned = injury_class.loc[:, (injury_class.isnull().mean() * 100) <= threshold]
-    
-    # imputing missing values with mode
-    for col in injury_class_cleaned.select_dtypes(include=['object', 'category']):
-        injury_class_cleaned[col].fillna(injury_class_cleaned[col].mode()[0], inplace=True)
-
-    # imputing missing values with median
-    for col in injury_class_cleaned.select_dtypes(include=['float64', 'int64']):
-        injury_class_cleaned[col].fillna(injury_class_cleaned[col].median(), inplace=True)
 
     binarize(injury_class_cleaned)
 
