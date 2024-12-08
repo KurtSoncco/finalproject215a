@@ -233,8 +233,7 @@ def clean_analysis(df_analysis):
     """Clean the analysis dataset."""
     
     # Fill missing values with 0
-    df_analysis.fillna(0, inplace=True)
-
+    df_analysis.fillna(-1, inplace=True)
     return df_analysis
 
 
@@ -261,8 +260,6 @@ def clean_onfield(df_field):
 
     # Since we are interested on loss of consciousness, we will join the manual and total GCS values
     df_field.loc[df_field["totalgcsavailable"] =="Y", "totalgcs"] = df_field[df_field["totalgcsavailable"] =="Y"]["totalgcsmanual"]
-    df_field.drop(columns=["totalgcsmanual", "sectiongcsavailable", "totalgcsavailable", "gcseye", "verbalgcs", "motorgcs"], inplace=True)
-
     return df_field
 
 
@@ -292,38 +289,235 @@ def clean_outside(df_outside):
     #df_outside.loc[df_outside["totalgcsavailable"] =="Y", "totalgcs"] = df_outside[df_outside["totalgcsavailable"] =="Y"]["totalgcsmanual"]
     #df_outside.drop(columns=["totalgcsmanual", "sectiongcsavailable", "totalgcsavailable", "gcseye", "verbalgcs", "motorgcs"], inplace=True)
 
-    return df_outside
+    return df_outside  
 
+def clean_kappa(kappa):
+    kappa["ptambulatorypriorarrival"].replace('3', 2, inplace=True)
+    kappa["ptambulatorypriorarrival"].replace('ND', 2, inplace=True)
+    kappa["ptambulatorypriorarrival"].replace('N', 0, inplace=True)
+    kappa["ptambulatorypriorarrival"].replace('Y', 1, inplace=True)
+    kappa["hxlocsite"].replace('N', 0, inplace=True)
+    kappa["hxlocsite"].replace('Y', 1, inplace=True)
+    kappa["hxlocsite"].replace('ND', 2, inplace=True)
+    kappa["hxlocsite"].replace('3', 2, inplace=True)
+    kappa["hxlocsite"].replace('U', 2, inplace=True)
+    kappa["sectiongcsavailable"].replace('Y', 1, inplace=True)
+    kappa["sectiongcsavailable"].replace('ND', 2, inplace=True)
+    kappa["sectiongcsavailable"].replace('Y', 1, inplace=True)
+    kappa["sectiongcsavailable"].replace('ND', 2, inplace=True)
+    kappa["sectiongcsavailable"] = kappa["sectiongcsavailable"].astype(int)
+    kappa["totalgcsmanual"].fillna(-1, inplace=True)
+    kappa["totalgcsmanual"] = kappa["totalgcsmanual"].astype(int)
+    kappa["gcseye"].fillna(-1, inplace=True)
+    kappa["totalgcs"].fillna(-1, inplace=True)
+    kappa["motorgcs"].fillna(-1, inplace=True)
+    kappa["avpu"].replace('N', 0, inplace=True)
+    kappa["avpu"].replace('Y', 1, inplace=True)
+    kappa["avpudetails"].replace('A', 0, inplace=True)
+    kappa["avpudetails"].replace('P', 1, inplace=True)
+    kappa["avpudetails"].replace('V', 2, inplace=True)
+    kappa["avpudetails"].replace('U', 3, inplace=True)
+    kappa["avpudetails"].replace('N', 4, inplace=True)
+    kappa["avpudetails"].fillna(-1, inplace=True)
+    kappa["avpumental"].replace("OTH", 0, inplace=True)
+    kappa["avpumental"].fillna(-1, inplace=True)
+    kappa["avpumentaltxtcat"].replace('UNALTERED', 0, inplace=True)
+    kappa["avpumentaltxtcat"].replace('ALTERED', 1, inplace=True)
+    kappa["avpumentaltxtcat"].fillna(-1, inplace=True)
+    kappa["ptcomppain"].replace('N', 0, inplace=True)
+    kappa["ptcomppain"].replace('Y', 1, inplace=True)
+    kappa["ptcomppain"].fillna(-1, inplace=True)
+    kappa["ptcomppain"].replace('ND', -1, inplace=True)
+    kappa["ptcomppain"].replace('S', -1, inplace=True)
+    kappa["ptcomppain"].replace('YND', -1, inplace=True)
+    kappa["ptcomppain"].replace('P', -1, inplace=True)
+    kappa["ptcomppainneckmove"].fillna(-1, inplace=True)
+    kappa["ptcomppainneckmove"].replace('ND', -1, inplace=True)
+    kappa["ptcomppainneckmove"].replace('N', 0, inplace=True)
+    kappa["ptcomppainneckmove"].replace('Y', 1, inplace=True)
+    kappa["pttender"].replace('N', 0, inplace=True)
+    kappa["pttender"].replace('Y', 1, inplace=True)
+    kappa["pttender"].fillna(-1, inplace=True)
+    kappa["pttender"].replace('ND', -1, inplace=True)
+    kappa["pttender"].replace('S', -1, inplace=True)
+    kappa["pttenderneckothertxtcat"].replace('No', 0, inplace=True)
+    kappa["pttenderneckothertxtcat"].replace('Yes', 1, inplace=True)
+    kappa["pttenderneckothertxtcat"].fillna(-1, inplace=True)
+    kappa["limitedrangemotion"].replace('N', 0, inplace=True)
+    kappa["limitedrangemotion"].replace('Y', 1, inplace=True)
+    kappa["limitedrangemotion"].fillna(-1, inplace=True)
+    kappa["limitedrangemotion"].replace('ND', -1, inplace=True)
+    kappa["limitedrangemotion"].replace('3', -1, inplace=True)
+    kappa["limitedrangemotion"].replace('4', -1, inplace=True)
+    kappa["otherinjuries"].replace('N', 0, inplace=True)
+    kappa["otherinjuries"].replace('Y', 1, inplace=True)
+    kappa["minorinjuries"].replace('N', 0, inplace=True)
+    kappa["minorinjuries"].replace('Y', 1, inplace=True)
+    kappa["ptparesthesias"].replace('N', 0, inplace=True)
+    kappa["ptparesthesias"].replace('Y', 1, inplace=True)
+    kappa["ptparesthesias"].fillna(-1, inplace=True)
+    kappa["ptparesthesias"].replace('ND', -1, inplace=True)
+    kappa["ptparesthesias"].replace('3', -1, inplace=True)
+    kappa["ptsensoryloss"].replace('N', 0, inplace=True)
+    kappa["ptsensoryloss"].replace('Y', 1, inplace=True)
+    kappa["ptsensoryloss"].fillna(-1, inplace=True)
+    kappa["ptsensoryloss"].replace('ND', -1, inplace=True)
+    kappa["ptsensoryloss"].replace('3', -1, inplace=True)
+    kappa["ptextremityweakness"].replace('N', 0, inplace=True)
+    kappa["ptextremityweakness"].replace('Y', 1, inplace=True)
+    kappa["ptextremityweakness"].fillna(-1, inplace=True)
+    kappa["ptextremityweakness"].replace('ND', -1, inplace=True)
+    kappa["ptextremityweakness"].replace('3', -1, inplace=True)
+    kappa["otherneurodeficit"].replace('N', 0, inplace=True)
+    kappa["otherneurodeficit"].replace('Y', 1, inplace=True)
+    kappa["otherneurodeficit"].fillna(-1, inplace=True)
+    kappa["otherneurodeficit"].replace('ND', -1, inplace=True)
+    kappa["otherneurodeficitdesccat"].replace('No', 0, inplace=True)
+    kappa["otherneurodeficitdesccat"].replace('Yes', 1, inplace=True)
+    kappa["otherneurodeficitdesccat"].fillna(-1, inplace=True)
+    kappa["intervforcervicalstab"].replace('N', 0, inplace=True)
+    kappa["intervforcervicalstab"].replace('Y', 1, inplace=True)
+    kappa["outcomestudysite"].replace('N', 0, inplace=True)
+    kappa["outcomestudysite"].replace('PND', 1, inplace=True)
+    kappa["outcomestudysite"].replace('DTH', 2, inplace=True)
+    kappa["outcomestudysiteneuro"].replace('NR', 0, inplace=True)
+    kappa["outcomestudysiteneuro"].replace('MD', 1, inplace=True)
+    kappa["outcomestudysiteneuro"].replace('SD', 2, inplace=True)
+    kappa["outcomestudysiteneuro"].replace('PVS', 3, inplace=True)
+    kappa["outcomestudysiteneuro"].fillna(-1, inplace=True)
+    kappa["outcomestudysitemobility"].replace('N', 0, inplace=True)
+    kappa["outcomestudysitemobility"].replace('DA', 1, inplace=True)
+    kappa["outcomestudysitemobility"].replace('WD', 2, inplace=True)
+    kappa["outcomestudysitemobility"].replace('I', 3, inplace=True)
+    kappa["outcomestudysitemobility"].fillna(-1, inplace=True)
+    kappa["outcomestudysitebowel"].replace('N', 0, inplace=True)
+    kappa["outcomestudysitebowel"].replace('I', 1, inplace=True)
+    kappa["outcomestudysitebowel"].fillna(-1, inplace=True)
+    kappa["outcomestudysiteurine"].replace('N', 0, inplace=True)
+    kappa["outcomestudysiteurine"].replace('I', 1, inplace=True)
+    kappa["outcomestudysiteurine"].replace('C', -1, inplace=True)
+    kappa["outcomestudysiteurine"].fillna(-1, inplace=True)
+    kappa["fielddocumentation"].fillna(-1, inplace=True)
+    kappa["fielddocumentation"].replace('EMS', 0, inplace=True)
+    kappa["fielddocumentation"].replace('NR', 1, inplace=True)
+    kappa["fielddocumentation"].replace('OTR', 2, inplace=True)
+    kappa["ptambulatoryprioremsarrival"].replace('N', 0, inplace=True)
+    kappa["ptambulatoryprioremsarrival"].replace('Y', 1, inplace=True)
+    kappa["ptambulatoryprioremsarrival"].fillna(-1, inplace=True)
+    kappa["ptambulatoryprioremsarrival"].replace('ND', -1, inplace=True)
+    kappa["ptambulatoryprioremsarrival"].replace('PA', -1, inplace=True)
+    kappa["patientsposition"].fillna(-1, inplace=True)
+    kappa["patientsposition"].replace('L', 0, inplace=True)
+    kappa["patientsposition"].replace('ND', -1, inplace=True)
+    kappa["patientsposition"].replace('S', 1, inplace=True)
+    kappa["patientsposition"].replace('IDEMS', 2, inplace=True)
+    kappa["patientsposition"].replace('S', 3, inplace=True)
+    kappa["patientsposition"].replace('PA', 4, inplace=True)
+    kappa["patientsposition"].replace('W', 5, inplace=True)
+    kappa["hxlocfield"].fillna(-1, inplace=True)
+    kappa["hxlocfield"].replace('N', 0, inplace=True)
+    kappa["hxlocfield"].replace('Y', 1, inplace=True)
+    kappa["hxlocfield"].replace('ND', -1, inplace=True)
+    kappa["hxlocfield"].replace('U', -1, inplace=True)
+    kappa["hxlocfield"].replace('S', -1, inplace=True)
+    kappa["eddocumentation"].fillna(-1, inplace=True)
+    kappa["eddocumentation"].replace('SITE', 0, inplace=True)
+    kappa["eddocumentation"].replace('ED', 1, inplace=True)
+    kappa["eddocumentation"].replace('EDU', 2, inplace=True)
+    kappa["ptambulatorypriorarrivaled"].fillna(-1, inplace=True)
+    kappa["ptambulatorypriorarrivaled"].replace('N', 0, inplace=True)
+    kappa["ptambulatorypriorarrivaled"].replace('Y', 1, inplace=True)
+    kappa["ptambulatorypriorarrivaled"].replace('ND', -1, inplace=True)
+    kappa["hxloced"].fillna(-1, inplace=True)
+    kappa["hxloced"].replace('N', 0, inplace=True)
+    kappa["hxloced"].replace('Y', 1, inplace=True)
+    kappa["hxloced"].replace('ND', -1, inplace=True)
+    kappa["hxloced"].replace('U', -1, inplace=True)
+    kappa["hxloced"].replace('S', -1, inplace=True)
+    kappa["helmet"].replace('N', 0, inplace=True)
+    kappa["helmet"].replace('Y', 1, inplace=True)
+    kappa["helmet"].fillna(-1, inplace=True)
+    kappa["helmet"].replace('ND', -1, inplace=True)
+    kappa["clotheslining"].fillna(-1, inplace=True)
+    kappa["clotheslining"].replace('N', 0, inplace=True)
+    kappa["clotheslining"].replace('Y', 1, inplace=True)
+    kappa["clotheslining"].replace('ND', -1, inplace=True)
+    return kappa
 
-# Creating the target data
+def clean_medical_history(medicalhistory):
+    medicalhistory["bodyasawhole"].replace('N', 0, inplace=True)
+    medicalhistory["bodyasawhole"].replace('A', 1, inplace=True)
+    medicalhistory["bodyasawhole"].fillna(-1, inplace=True)
+    medicalhistory["heent"].replace('N', 0, inplace=True)
+    medicalhistory["heent"].replace('A', 1, inplace=True)
+    medicalhistory["heent"].fillna(-1, inplace=True)
+    medicalhistory["cardiovascular"].replace('N', 0, inplace=True)
+    medicalhistory["cardiovascular"].replace('A', 1, inplace=True)
+    medicalhistory["cardiovascular"].fillna(-1, inplace=True)
+    medicalhistory["respiratory"].fillna(-1, inplace=True)
+    medicalhistory["respiratory"].replace('N', 0, inplace=True)
+    medicalhistory["respiratory"].replace('A', 1, inplace=True)
+    medicalhistory["gastrointestinal"].replace('N', 0, inplace=True)
+    medicalhistory["gastrointestinal"].replace('A', 1, inplace=True)
+    medicalhistory["gastrointestinal"].fillna(-1, inplace=True)
+    medicalhistory["genitourinary"].replace('N', 0, inplace=True)
+    medicalhistory["genitourinary"].replace('A', 1, inplace=True)
+    medicalhistory["genitourinary"].fillna(-1, inplace=True)
+    medicalhistory["musculoskeletal"].replace('N', 0, inplace=True)
+    medicalhistory["musculoskeletal"].replace('A', 1, inplace=True)
+    medicalhistory["musculoskeletal"].fillna(-1, inplace=True)
+    medicalhistory["neurological"].fillna(-1, inplace=True)
+    medicalhistory["neurological"].replace('N', 0, inplace=True)
+    medicalhistory["neurological"].replace('A', 1, inplace=True)
+    medicalhistory["endocrinological"].replace('N', 0, inplace=True)
+    medicalhistory["endocrinological"].replace('A', 1, inplace=True)
+    medicalhistory["endocrinological"].fillna(-1, inplace=True)
+    medicalhistory["dermatologicalskin"].replace('N', 0, inplace=True)
+    medicalhistory["dermatologicalskin"].replace('A', 1, inplace=True)
+    medicalhistory["dermatologicalskin"].fillna(-1, inplace=True)
+    medicalhistory["hematologiclymphatic"].replace('N', 0, inplace=True)
+    medicalhistory["hematologiclymphatic"].replace('A', 1, inplace=True)
+    medicalhistory["hematologiclymphatic"].fillna(-1, inplace=True)
+    medicalhistory["medications"].replace('N', 0, inplace=True)
+    medicalhistory["medications"].replace('Y', 1, inplace=True)
+    medicalhistory["medications"].fillna(-1, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('Arnold Chiari Malformation', 0, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('Cervical spinal stenosis', 1, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('Achondrodysplasia', 2, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('Down\'s Syndrome', 3, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('Congenital anomaly of cervical vertebrae', 4, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('C-spine fusion, Larsen\'s Syndrome', 5, inplace=True)
+    medicalhistory["otherpredisposingcondition"].replace('C-spine injury', 6, inplace=True)
+    medicalhistory["otherpredisposingcondition"].fillna(-1, inplace=True)
+    return medicalhistory
 
-def create_target(df_analysis, df_injuryclassification):
-
-    # Convert the columns of CSFractures to True and False
-    A = df_injuryclassification["CSFractures"].apply(lambda x: True if x == "Y" else False)
-    B = df_injuryclassification["Ligamentoptions"].apply(lambda x: True if x == "Y" else False)
-
-    # Create a new column with the logical OR of the two columns
-    df_injuryclassification["CSI"] = A | B
-
-    # Merge the two dataframes on the column "StudySubjectID"
-    df_target = pd.merge(df_analysis, df_injuryclassification, on="StudySubjectID", how="left")
-
-    # Only consider the columns "StudySubjectID" and "CSI"
-    df_target = df_target[["StudySubjectID", "CSI"]]
-
-    # Fill the NaN values with False
-    df_target["CSFractures"] = df_target["CSFractures"].fillna(False)
-
-    # Rename the column "CSFractures" to "CSI"
-    df_target.rename(columns={"CSFractures": "CSI"}, inplace=True)
-
-    # Export the dataframe to a CSV file
-    df_target.to_csv("../data/target_data.csv", index=False)
-
-    return df_target
-
-# cleaning by jacob
+def clean_injury_mechanism(injurymechanism):
+    injurymechanism["injurytime"] = pd.to_datetime(injurymechanism["injurytime"], format='%H:%M:%S', errors='coerce')
+    injurymechanism["injurydate"] = pd.to_datetime(injurymechanism["injurydate"], format='%Y-%m-%d', errors='coerce')
+    injurymechanism["injurydatetime"] = injurymechanism.apply(
+        lambda row: pd.Timestamp.combine(row["injurydate"], row["injurytime"].time()) if pd.notnull(row["injurydate"]) and pd.notnull(row["injurytime"]) else pd.NaT,
+        axis=1
+    )
+    injurymechanism["estimatetimeinjury"].replace('U', -1, inplace=True)
+    injurymechanism["estimatetimeinjury"].fillna(-1, inplace=True)
+    injurymechanism["injuryprimarymechanism"].replace('ND', -1, inplace=True)
+    injurymechanism["clotheslining"].replace('N', 0, inplace=True)
+    injurymechanism["clotheslining"].replace('Y', 1, inplace=True)
+    injurymechanism["clotheslining"].replace('ND', -1, inplace=True)
+    injurymechanism["clotheslining"].fillna(-1, inplace=True)
+    injurymechanism["helmet"].replace('N', 0, inplace=True)
+    injurymechanism["helmet"].replace('Y', 1, inplace=True)
+    injurymechanism["helmet"].replace('ND', -1, inplace=True)
+    injurymechanism["headfirst"].replace('N', 0, inplace=True)
+    injurymechanism["headfirst"].replace('Y', 1, inplace=True)
+    injurymechanism["headfirst"].replace('ND', -1, inplace=True)
+    injurymechanism["headfirstregion"].replace('ND', -1, inplace=True)
+    injurymechanism["headfirstregion"].replace('B', 0, inplace=True)
+    injurymechanism["headfirstregion"].replace('F', 1, inplace=True)
+    injurymechanism["headfirstregion"].replace('T', 2, inplace=True)
+    injurymechanism["headfirstregion"].replace('S', 3, inplace=True)
+    injurymechanism.drop(["injurydate", "injurytime"], axis=1, inplace=True)
+    return injurymechanism
 
 def standardize(df):
     # Make sure every dataset has the same column "StudySubjectID"
@@ -359,21 +553,12 @@ def standardize(df):
 def binarize(df):
     for cols in df.columns:
         if 'Y' in list(df[cols].unique()) and 'N' in list(df[cols].unique()):
-            print(cols)
             df[cols] = df[cols].replace('Y', 1)
             df[cols] = df[cols].replace('N', 0)
     return df
 
 
-def clean_clinical_site(clinical):
-    # threshold for dropping columns with excessive missing data
-    threshold = 80.0
-    
-    # drop columns w/ missing above threshold
-    clinical_cleaned = clinical.loc[:, (clinical.isnull().mean() * 100) <= threshold]
-
-    df = clinical_cleaned.drop(columns=["arrivaldate","arrivaltime", "arrivaltimend", "modearrival"])
-
+def clean_clinical_site(df):
     df = binarize(df)
 
     # GCSEye
@@ -473,23 +658,11 @@ def clean_clinical_site(clinical):
     return df
 
 def clean_demo(demo):
-    # threshold for dropping columns with excessive missing data
-    threshold = 80.0
-    
-    # drop columns w/ missing above threshold
-    demo_cleaned = demo.loc[:, (demo.isnull().mean() * 100) <= threshold]
-
-    demo_cleaned = binarize(demo_cleaned)
+    demo_cleaned = binarize(demo)
 
     return demo_cleaned
 
 def clean_injuryclass(injury_class):
-    # threshold for dropping columns with excessive missing data
-    threshold = 80.0
-    
-    # drop columns w/ missing above threshold
-    injury_class_cleaned = injury_class.loc[:, (injury_class.isnull().mean() * 100) <= threshold]
-
     injury_class_cleaned = binarize(injury_class_cleaned)
 
     return injury_class_cleaned
@@ -498,45 +671,38 @@ def main():
     """
     Main function to execute the cleaning process
     """
-    try:
-        print("Reading data...")
-        # Merge the data
-        merging_datasets()
+    print("Reading data...")
+    # Merge the data
+    merging_datasets()
 
-        # Read the merged data
-        df_total = pd.read_csv("../data/merged_data.csv", low_memory=False)
-        df_total.columns = df_total.columns.str.lower()
-        
-        print("\nInitial data shape:", df_total.shape)
-        print("\nColumns with missing values:")
-        print(df_total.isnull().sum()[df_total.isnull().sum() > 0])
-        
-        print("\nCleaning data...")
-        df_cleaned = clean_radiology_variables(df_total)
-        df_cleaned = clean_analysis(df_cleaned)
-        df_cleaned = clean_onfield(df_cleaned)
-        df_cleaned = clean_outside(df_cleaned)
-        df_cleaned = clean_clinical_site(df_cleaned)
-        df_cleaned = clean_demo(df_cleaned)
+    # Read the merged data
+    df_total = pd.read_csv("../data/merged_data.csv", low_memory=False)
+    df_total.columns = df_total.columns.str.lower()
+    
+    print("\nInitial data shape:", df_total.shape)
+    print("\nColumns with missing values:")
+    print(df_total.isnull().sum()[df_total.isnull().sum() > 0])
+    
+    print("\nCleaning data...")
+    df_cleaned = clean_radiology_variables(df_total)
+    df_cleaned = clean_analysis(df_cleaned)
+    df_cleaned = clean_onfield(df_cleaned)
+    df_cleaned = clean_outside(df_cleaned)
+    df_cleaned = clean_clinical_site(df_cleaned)
+    df_cleaned = clean_demo(df_cleaned)
+    df_cleaned = clean_kappa(df_cleaned)
+    df_cleaned = clean_medical_history(df_cleaned)
+    df_cleaned = clean_injury_mechanism(df_cleaned)
 
-        # If specified, drop 80% missing columns
-        drop_missing = False
-        if drop_missing:
-            df_cleaned = clean_demo(df_cleaned)
-        
-        # Verify the cleaning process
-        verify_cleaning(df_total, df_cleaned)
-        
-        os.makedirs("../data", exist_ok=True)
-        df_cleaned.to_csv("../data/merged_data_cleaned.csv", index=False)
-        print("\nData cleaning completed successfully.")
-        print("\nData shape after cleaning:", df_cleaned.shape)
-        
-    except Exception as e:
-        print(f"Error during data cleaning: {str(e)}")
+    
+    # Verify the cleaning process
+    verify_cleaning(df_total, df_cleaned)
+    
+    os.makedirs("../data", exist_ok=True)
+    df_cleaned.to_csv("../data/merged_data_cleaned.csv", index=False)
+    print("\nData cleaning completed successfully.")
+    print("\nData shape after cleaning:", df_cleaned.shape)
 
 if __name__ == "__main__":
     main()
     
-
-
