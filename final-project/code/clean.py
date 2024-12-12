@@ -694,6 +694,9 @@ def main():
     df_cleaned = clean_medical_history(df_cleaned)
     df_cleaned = clean_injury_mechanism(df_cleaned)
 
+    # Cleaning some parts of totalgcs
+    df_cleaned["totalgcs"] = df_cleaned["totalgcs"].replace({"7T":7}).astype(float)
+
     
     # Verify the cleaning process
     verify_cleaning(df_total, df_cleaned)
