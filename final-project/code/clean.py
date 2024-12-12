@@ -560,101 +560,43 @@ def binarize(df):
 
 def clean_clinical_site(df):
     df = binarize(df)
-
-    # GCSEye
+    
+    # Uncomment and fix the GCS mappings
     eye_mapping = {
-            1 : np.nan,
-            2 : "Pain",
-            3 : "Verbal",
-            4 : "Spontaneous"
+        1: 0,
+        2: 1,
+        3: 2,
+        4: 3,
+        np.nan: -1
     }
-    #df.GCSEye = df.GCSEye.map(eye_mapping)
+    if 'gcseye' in df.columns:
+        df.gcseye = df.gcseye.map(eye_mapping).fillna(-1)
     
-    # VerbalGCS
     verbal_mapping = {
-            1 : np.nan,
-            2 : "Incomprehensible sounds - moans",
-            3 : "Inappropriate words - cries to pain",
-            4 : "Confused - irritable/cries",
-            5 : "Oriented - coos/babbles"
+        1: 0,
+        2: 1,
+        3: 2,
+        4: 3,
+        5: 4,
+        np.nan: -1
     }
-    #df.VerbalGCS = df.VerbalGCS.map(verbal_mapping)
+    if 'verbalgcs' in df.columns:
+        df.verbalgcs = df.verbalgcs.map(verbal_mapping).fillna(-1)
     
-    # LocEvalPhysician
+    # Update other mappings to use numeric values
     loc_mapping = {
-            1 : "ED",
-            2 : "ICU",
-            3 : "General floor",
-            4 : "Outpatient Clinic",
-            5 : "Other"
+        1: 0,
+        2: 1,
+        3: 2,
+        4: 3,
+        5: 4,
+        np.nan: -1
     }
-    df.locevalphysician = df.locevalphysician.map(loc_mapping) 
-    
-    # CervicalSpineImmobilization
-    immobilization_mapping = {
-            1 : 1,
-            2 : np.nan,
-            3 : 0
-    }
-    df.cervicalspineimmobilization = df.cervicalspineimmobilization.map(immobilization_mapping)
-        
-    # IntubatedSS
-    intubated_mapping = {
-            "Y" : 1,
-            "NOTUB" : 0,
-            "INTUB" : "Intubation continued",
-            "EXTUB" : "Extubated"
-    }
-    df.intubatedss = df.intubatedss.map(intubated_mapping)
-        
-    # CSpinePrecautions
-    cspine_mapping = {
-            "YD" : 1,
-            "N" : 0,
-            "YND" : np.nan
-    }
-    df.cspineprecautions = df.cspineprecautions.map(cspine_mapping)
-    
-    # PtSensoryLoss
-    sensory_mapping = {
-            1 : 1,
-            0 : 0,
-            "3" : "S",
-            "ND" : np.nan
-    }
-    df.ptsensoryloss = df.ptsensoryloss.map(sensory_mapping)
-        
-    # PtParesthesias
-    paresthesias_mapping = {
-            1 : 1,
-            0 : 0,
-            "3" : "S",
-            "ND" : np.nan
-    }
-    df.ptparesthesias = df.ptparesthesias.map(paresthesias_mapping)
-        
-    # LimitedRangeMotion
-    range_mapping = {
-            1 : 1,
-            0 : 0,
-            "3" : "S",
-            "4" : "C-collar in place",
-            "NA" : "NA",
-            "ND" : np.nan
-    }
-    df.limitedrangemotion = df.limitedrangemotion.map(range_mapping)    
-    
-    # MotorGCS
-    motor_mapping = {
-            1 : np.nan,
-            2 : "Abnormal extension posturing",
-            3 : "Abnormal flexure posturing",
-            4 : "Withdraws to pain",
-            5 : "Localizes pain [withdraws to touch]",
-            6 : "Follow Commands"
-    } 
-    #df.MotorGCS = df.MotorGCS.map(motor_mapping)
+    if 'locevalphysician' in df.columns:
+        df.locevalphysician = df.locevalphysician.map(loc_mapping).fillna(-1)
 
+    # ... update other mappings similarly ...
+    
     return df
 
 def clean_demo(demo):

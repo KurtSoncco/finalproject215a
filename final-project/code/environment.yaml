@@ -1,8 +1,11 @@
 name: 215a
 channels:
+  - pytorch
+  - conda-forge
   - defaults
 dependencies:
   - python
+  - pytorch
   - pip:
     - numpy
     - pandas
@@ -10,3 +13,9 @@ dependencies:
     - seaborn
     - scikit-learn
     - jupyterlab
+    - torch
+    - torchvision
+    - torchaudio
+    - ipykernel
+    - ipython
+    - notebook
