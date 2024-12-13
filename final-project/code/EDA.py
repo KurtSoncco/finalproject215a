@@ -63,7 +63,7 @@ def plot_cases_gcs(data_target):
     cases_gcs = cases_gcs.drop(-1)
 
     # Plot the data
-    sns.barplot(x=check_df.index, y=check_df.values, color="lightgreen")
+    sns.barplot(x=cases_gcs.index, y=cases_gcs.values, color="lightgreen")
     plt.xlabel("GCS Score")
     plt.ylabel("Number of Cases")
     plt.title("Number of Cases by GCS Score")
