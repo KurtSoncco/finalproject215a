@@ -1,165 +1,78 @@
-# %% [markdown]
-# # Random Forest Model for Cervical Spine Injury Prediction
-
-# %%
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, roc_auc_score
-from sklearn.metrics import confusion_matrix, balanced_accuracy_score, make_scorer, roc_curve, auc
+from sklearn.metrics import confusion_matrix, roc_auc_score, recall_score, precision_score, f1_score
+from sklearn.model_selection import GridSearchCV
+
+# Assume df_model now includes 'site' and the eight factors plus 'csi'
+df_model = pd.read_csv("./data/cleaned_eight_factors.csv")
+
+# Extract features and target
+X = df_model[['altered_mental_status',
+              'focal_neurologic_findings',
+              'neck_pain',
+              'torticollis',
+              'predisposing_condition',
+              'substantial_torso_injury',
+              'diving',
+              'high_risk_mvc']].values
+y = df_model['csi'].values
+
+# site_train_val_test_split function defined previously to split based on site
 from train_test_split import site_train_val_test_split
 
-# Set style for visualizations
-sns.set_palette("colorblind")
-plt.style.use('seaborn-v0_8')
+X_train, X_val, X_test, y_train, y_val, y_test = site_train_val_test_split(df_model, df_model[['studysubjectid','csi']], 
+                                                                          val_size=0.2, test_size=0.2, random_state=42)
 
-def print_metrics(y_true, y_pred, title=""):
-    """Print and plot comprehensive metrics with clinical focus."""
-    if title:
-        print(f"\n{title}")
-    
-    # Calculate confusion matrix for FNR
-    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
-    fnr = fn / (fn + tp)  # False Negative Rate
-    
-    metrics = {
-        'Sensitivity (Recall)': recall_score(y_true, y_pred, average='weighted'),
-        'Specificity': recall_score(y_true, y_pred, pos_label=0, average='weighted'),
-        'Precision': precision_score(y_true, y_pred, average='weighted'),
-        'F1 Score': f1_score(y_true, y_pred, average='weighted'),
-        'Balanced Accuracy': balanced_accuracy_score(y_true, y_pred),
-        'AUC-ROC': roc_auc_score(y_true, y_pred),
-        'False Negative Rate': fnr
-    }
-    
-    print('\nMetrics:')
-    for metric, value in metrics.items():
-        print(f'{metric}: {value:.4f}')
-    
-    # Confusion Matrix
-    cm = confusion_matrix(y_true, y_pred)
-    plt.figure(figsize=(10, 4))
-    
-    plt.subplot(1, 2, 1)
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-    plt.title(f'Confusion Matrix - {title}')
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    
-    # ROC Curve
-    plt.subplot(1, 2, 2)
-    fpr, tpr, _ = roc_curve(y_true, y_pred)
-    roc_auc = auc(fpr, tpr)
-    plt.plot(fpr, tpr, label=f'ROC curve (AUC = {roc_auc:.2f})')
-    plt.plot([0, 1], [0, 1], 'k--')
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title(f'ROC Curve - {title}')
-    plt.legend()
-    
-    plt.tight_layout()
-    plt.show()
-    
-    return metrics
+rf = RandomForestClassifier(random_state=42, class_weight='balanced')
+param_grid = {
+    'n_estimators': [100, 200],
+    'max_depth': [5, 10, None],
+    'min_samples_leaf': [1, 2, 5],
+    'max_features': ['sqrt', 'log2']
+}
 
-def prepare_data():
-    """Load and prepare data following Kurt's approach."""
-    # Load data
-    df = pd.read_csv('./data/merged_data_cleaned.csv', low_memory=False)
-    target = pd.read_csv('./data/target.csv')
-    target.columns = target.columns.str.lower()
-    target.rename(columns={"csfractures": "csi"}, inplace=True)
-    
-    # Data cleaning following Kurt's approach
-    df = df.select_dtypes(exclude=['object'])
-    df = df.replace(-1, 0)
-    df = df.drop(columns=['sectiongcsavailable'])
-    
-    # Reorder target to match df
-    target = target.set_index('studysubjectid').loc[df['studysubjectid']].reset_index()
-    
-    # Add print statements to inspect data
-    print(f"Shape of data before feature selection: {df.shape}")
-    
-    # Check for potential data leakage columns
-    print("\nChecking for suspicious columns that might cause data leakage:")
-    for col in df.columns:
-        if any(keyword in col.lower() for keyword in ['fracture', 'injury', 'csi', 'diagnosis', 'outcome']):
-            print(f"Potential leakage column: {col}")
-    
-    # More conservative feature dropping
-    columns_to_drop = [
-        "caseid", 
-        "studysubjectid", 
-        "ageinyears",
-        # Add any columns identified as potential leakage
-    ]
-    
-    df = df.drop(columns=columns_to_drop)
-    print(f"\nShape of data after feature selection: {df.shape}")
-    
-    return df, target
+grid_search = GridSearchCV(rf, param_grid, scoring='recall', cv=5, n_jobs=-1, verbose=1)
+grid_search.fit(X_train, y_train)
+best_rf = grid_search.best_estimator_
 
-def main():
-    # Prepare data
-    df, target = prepare_data()
-    
-    # Store column names before splitting
-    feature_names = df.columns.tolist()  # Convert to list for consistency
-    
-    # Split data
-    train_df, val_df, test_df, train_target, val_target, test_target = site_train_val_test_split(
-        df, target['csi'], random_state=19
-    )
-    
-    # Initialize Random Forest with more conservative parameters
-    rf_model = RandomForestClassifier(
-        n_estimators=100,
-        max_depth=10,
-        min_samples_split=5,
-        min_samples_leaf=5,
-        max_features='sqrt',
-        class_weight='balanced',
-        random_state=42
-    )
-    
-    # Train model
-    rf_model.fit(train_df, train_target)
-    
-    # Add debug prints AFTER model training
-    print(f"Number of features: {len(feature_names)}")
-    print(f"Length of feature importances: {len(rf_model.feature_importances_)}")
-    
-    # Make sure lengths match before creating DataFrame
-    if len(feature_names) == len(rf_model.feature_importances_):
-        feature_importance = pd.DataFrame({
-            'feature': feature_names,
-            'importance': rf_model.feature_importances_
-        })
-        feature_importance = feature_importance.sort_values('importance', ascending=False).head(20)
-        
-        plt.figure(figsize=(12, 6))
-        sns.barplot(data=feature_importance, x='importance', y='feature')
-        plt.title('Top 20 Most Important Features for Clinical Decision Making')
-        plt.xlabel('Feature Importance')
-        plt.tight_layout()
-        plt.show()
-    else:
-        print("Error: Number of features doesn't match feature importances")
-        print("Features that might have been dropped:")
-        print(set(feature_names) - set(df.columns))
-    
-    # Make predictions
-    train_pred = rf_model.predict(train_df)
-    val_pred = rf_model.predict(val_df)
-    test_pred = rf_model.predict(test_df)
-    
-    # Evaluate model
-    print_metrics(train_target, train_pred, "Training Set")
-    print_metrics(val_target, val_pred, "Validation Set")
-    print_metrics(test_target, test_pred, "Test Set")
+# Get validation predictions (probabilities)
+y_val_proba = best_rf.predict_proba(X_val)[:, 1]
 
-if __name__ == "__main__":
-    main()
+# We want at least 90% sensitivity but not at the cost of zero specificity.
+desired_sensitivity = 0.9
+best_threshold = None
+best_f1 = -1.0
+
+thresholds = np.linspace(0, 1, 101)
+for t in thresholds:
+    y_val_pred_t = (y_val_proba >= t).astype(int)
+    sens_t = recall_score(y_val, y_val_pred_t)
+    if sens_t >= desired_sensitivity:
+        prec_t = precision_score(y_val, y_val_pred_t, zero_division=0)
+        f1_t = f1_score(y_val, y_val_pred_t)
+        # Choose the threshold that yields the best F1-score among those that meet the sensitivity criterion
+        if f1_t > best_f1:
+            best_f1 = f1_t
+            best_threshold = t
+
+print("Chosen threshold that achieves at least 90% sensitivity and maximizes F1 on validation data:", best_threshold)
+
+# Evaluate on the test set using this chosen threshold
+y_test_proba = best_rf.predict_proba(X_test)[:, 1]
+y_test_pred = (y_test_proba >= best_threshold).astype(int)
+
+tn, fp, fn, tp = confusion_matrix(y_test, y_test_pred).ravel()
+test_sensitivity = tp / (tp + fn)
+test_specificity = tn / (tn + fp)
+test_precision = tp / (tp + fp) if (tp+fp) > 0 else 0
+test_f1 = f1_score(y_test, y_test_pred)
+test_auc = roc_auc_score(y_test, y_test_proba)
+test_fnr = fn / (fn + tp) if (fn+tp) > 0 else 0
+
+print("Test Sensitivity:", test_sensitivity)
+print("Test Specificity:", test_specificity)
+print("Test Precision:", test_precision)
+print("Test F1 Score:", test_f1)
+print("Test AUC:", test_auc)
+print("Test FNR:", test_fnr)

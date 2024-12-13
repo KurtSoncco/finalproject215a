@@ -13,8 +13,8 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 warnings.filterwarnings('ignore')
 
 # Set random seeds for reproducibility
-torch.manual_seed(1)
-np.random.seed(42)
+torch.manual_seed(8)
+np.random.seed(8)
 
 def prepare_data():
     # Load data
