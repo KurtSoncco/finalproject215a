@@ -1,18 +1,19 @@
 We have all agreed on these attributions:
 
-____ worked on:
+Kurt Soncco worked on:
+- EDA and cleaning process
+- Logistic PCA and Logistic Regression
+- Revision of State of the art papers
+
+Finn worked on:
 -
 -
 
-____ worked on:
+Jacob worked on:
 -
 -
 
-____ worked on:
--
--
-
-____ worked on:
+Charlie worked on:
 -
 -
 
