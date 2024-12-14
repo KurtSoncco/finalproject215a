@@ -1,0 +1,21 @@
+We have all agreed on these attributions:
+
+Kurt Soncco worked on:
+- EDA and cleaning process
+- Logistic PCA and Logistic Regression
+- Revision of State of the art papers
+
+Finn Metz worked on:
+- Neural Network model
+- Train and test split
+- Cleaning process
+
+Jacob Kim worked on:
+- SVM model and PCA
+- Cleaning process
+
+Charlie Chen worked on:
+- CatBoost model
+- Cleaning process
+- Stability tests
+
