@@ -40,7 +40,7 @@ if __name__ == "__main__":
         'depth': [3, 4, 5, 6]
     }
     # Apply PCA to reduce the number of features to 100
-    pca = PCA(n_components=50)
+    pca = PCA(n_components=150)
     X_train_resampled = pca.fit_transform(X_train_resampled)
     X_val = pca.transform(X_val)
     X_test = pca.transform(X_test)
