@@ -11,7 +11,8 @@ Finn Metz worked on:
 - Cleaning process
 
 Jacob Kim worked on:
-- SVM model and PCA
+- SVM and Other MLs (RF, Gradient Boosting)
+- PCA
 - Cleaning process
 
 Charlie Chen worked on:

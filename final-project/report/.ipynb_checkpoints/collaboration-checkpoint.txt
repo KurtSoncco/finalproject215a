@@ -6,12 +6,13 @@ Kurt Soncco worked on:
 - Revision of State of the art papers
 
 Finn Metz worked on:
-- Neural Network model
+- Random Forest & NN Model
 - Train and test split
 - Cleaning process
 
 Jacob Kim worked on:
-- SVM model and PCA
+- SVM and Other MLs (RF, Gradient Boosting)
+- PCA
 - Cleaning process
 
 Charlie Chen worked on:
