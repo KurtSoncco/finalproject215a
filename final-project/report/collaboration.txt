@@ -5,7 +5,7 @@ Kurt Soncco worked on:
 - Logistic PCA and Logistic Regression
 - Revision of State of the art papers
 
-Finn  worked on:
+Finn Metz worked on:
 - Neural Network model
 - Train and test split
 - Cleaning process
