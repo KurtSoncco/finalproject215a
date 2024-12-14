@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import pearsonr
 
 # Set colorblind color palette
 sns.set_palette("colorblind")
@@ -69,6 +70,53 @@ def plot_cases_gcs(data_target):
     plt.title("Number of Cases by GCS Score")
     plt.savefig("../plots/cases_by_gcs.pdf", bbox_inches="tight", dpi=300)
 
+
+def plot_correlation_site(target):
+    """ Plot the correlation between the site and the target variable."""
+
+    # Read data
+    anal_var = pd.read_csv("../data/CSpine/CSV datasets/analysisvariables.csv")
+    # Fill Nan with -1
+    anal_var = anal_var.fillna(-1)
+    # Lower case the columns
+    anal_var.columns = anal_var.columns.str.lower()
+
+    # Calculate the correlation
+    corr_site = []
+    for site_i in anal_var.site.unique():
+        A = anal_var[anal_var.site == site_i].iloc[:, 4:]
+        B = target[anal_var.site == site_i]
+        correlation = A.apply(lambda x: pearsonr(x, B.csfractures)[0])
+        correlation.sort_values(ascending=False) # Sort the values
+        corr_site.append(correlation) # Append the correlation values
+
+    # Extract the variables names
+    variables = corr_site[0].index
+    sites = [f"Site {i+1}" for i in range(len(corr_site))]
+    # Use the correct name for selected variables
+    real_var = ["Altered Mental Status", "LOC", "Ambulatory Status",
+            "Focal Neurologic Findings", "Pain Neck", "Pain Back",
+    ]
+
+    # Plot the correlation
+    for i, variable in enumerate(variables):
+        plt.figure(figsize=(10, 6))
+        values = [site[variable] for site in corr_site]
+        plt.bar(sites, values, color="lightblue")
+        plt.title(f'Correlation of {real_var[i]} with CSI Immobilization')
+        plt.xlabel('Sites')
+        plt.ylabel('Correlation')
+        plt.xticks(rotation=45)
+        plt.show()
+        if i >= 5:
+            break
+
+    
+
+
+
+
+
 if __name__ == "__main__":
     # Read data
     data = pd.read_csv("../data/merged_data_cleaned.csv", low_memory=False)
@@ -91,6 +139,7 @@ if __name__ == "__main__":
     plot_cases_gcs(data_target)
 
     # Correlation plots
+    plot_correlation_site(target)
 
 
 
