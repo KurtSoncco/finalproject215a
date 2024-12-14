@@ -5,15 +5,17 @@ Kurt Soncco worked on:
 - Logistic PCA and Logistic Regression
 - Revision of State of the art papers
 
-Finn worked on:
--
--
+Finn  worked on:
+- Neural Network model
+- Train and test split
+- Cleaning process
 
-Jacob worked on:
--
--
+Jacob Kim worked on:
+- SVM model and PCA
+- Cleaning process
 
-Charlie worked on:
--
--
+Charlie Chen worked on:
+- CatBoost model
+- Cleaning process
+- Stability tests
 
