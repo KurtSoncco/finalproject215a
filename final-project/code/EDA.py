@@ -90,6 +90,8 @@ if __name__ == "__main__":
     # Plot the number of cases by GCS score
     plot_cases_gcs(data_target)
 
+    # Correlation plots
+
 
 
     
