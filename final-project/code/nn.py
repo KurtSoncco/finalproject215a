@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from train_test_split import site_train_val_test_split
+from train_test_split import site_train_val_test_split, train_val_test_split
 from sklearn.model_selection import train_test_split
 import torch
 from sklearn.metrics import accuracy_score, f1_score, recall_score
@@ -48,7 +48,8 @@ def process_data(df, target):
 
 if __name__ == "__main__":
     df, target = process_data(df, target)
-    X_train, X_val, X_test, y_train, y_val, y_test = site_train_val_test_split(df, target, val_size=0.2, test_size=0.2, random_state=42)
+    # X_train, X_val, X_test, y_train, y_val, y_test = site_train_val_test_split(df, target, val_size=0.2, test_size=0.2, random_state=42)
+    X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(df, target, val_size=0.2, test_size=0.2, random_state=42)
     X_train = torch.tensor(X_train, dtype=torch.float32)
     X_val = torch.tensor(X_val, dtype=torch.float32)
     X_test = torch.tensor(X_test, dtype=torch.float32)
