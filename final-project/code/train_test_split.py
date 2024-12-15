@@ -53,7 +53,7 @@ def train_val_test_split(df, target_df, val_size=0.2, test_size=0.2, random_stat
     """Randomly split data into train, val, and test sets."""
     # Combine features and target
     data = df.copy()
-    data['target'] = target_df['csi'].values.ravel()
+    data['target'] = target_df.values.ravel()
 
     # Drop identifying columns
     for col in ['site', 'caseid', 'studysubjectid']:
@@ -103,11 +103,6 @@ if __name__ == "__main__":
                 'diving',
                 'high_risk_mvc']].values
     y = df_model['csi'].values
-    # Convert df_model into a format suitable for site-based splitting
-    # We need 'site' in df_model if not present. If it's not present, you need to merge or add it.
-    # For demonstration, we'll assume df_model already has 'site' column.
-    # If not, please ensure you have the site info merged into df_model before this step.
-
     X_train, X_val, X_test, y_train, y_val, y_test = site_train_val_test_split(df_model, df_model[['studysubjectid','csi']], 
                                                                             val_size=0.2, test_size=0.2, random_state=42)
 
