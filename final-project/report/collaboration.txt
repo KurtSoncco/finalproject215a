@@ -4,10 +4,11 @@ Kurt Soncco worked on:
 - EDA and cleaning process
 - Logistic PCA and Logistic Regression
 - Revision of State of the art papers
+- Stability tests
+- Train and test split
 
 Finn Metz worked on:
 - Random Forest & NN Model
-- Train and test split
 - Cleaning process
 
 Jacob Kim worked on:
@@ -18,5 +19,4 @@ Jacob Kim worked on:
 Charlie Chen worked on:
 - CatBoost model
 - Cleaning process
-- Stability tests
 

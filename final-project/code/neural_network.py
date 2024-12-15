@@ -5,7 +5,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import matplotlib.pyplot as plt
-from train_test_split import site_train_val_test_split, enhanced_train_val_test_split
+from train_test_split import site_train_val_test_split
 import seaborn as sns
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score, confusion_matrix
 import warnings
@@ -18,8 +18,8 @@ np.random.seed(8)
 
 def prepare_data():
     # Load data
-    df = pd.read_csv('./data/merged_data_cleaned.csv', low_memory=False)
-    target = pd.read_csv('./data/target.csv')
+    df = pd.read_csv('../data/merged_data_cleaned.csv', low_memory=False)
+    target = pd.read_csv('../data/target.csv')
     target.columns = target.columns.str.lower()
     target.rename(columns={"csfractures": "csi"}, inplace=True)
     
@@ -29,7 +29,7 @@ def prepare_data():
     df_processed = pd.get_dummies(df_processed, drop_first=True)  # One-hot encode remaining columns
     
     # Use enhanced split with processed dataframe
-    train_df, val_df, test_df, train_target, val_target, test_target = enhanced_train_val_test_split(
+    train_df, val_df, test_df, train_target, val_target, test_target = site_train_val_test_split(
         df_processed, target
     )
     
@@ -159,7 +159,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler
     
     return best_model, train_losses, val_losses
 
-def evaluate_model(model, data_loader, device, threshold=0.5):  # Back to standard threshold
+def evaluate_model(model, data_loader, device, threshold=0.5, plot_confusion_matrix=False):  # Back to standard threshold
     model.eval()
     all_preds = []
     all_targets = []
@@ -181,6 +181,10 @@ def evaluate_model(model, data_loader, device, threshold=0.5):  # Back to standa
     # Calculate confusion matrix for FNR
     tn, fp, fn, tp = confusion_matrix(all_targets, all_preds).ravel()
     fnr = fn / (fn + tp)  # False Negative Rate
+
+    # Sepcificity and Sensitivity
+    specificity = tn / (tn + fp)
+    sensitivity = tp / (tp + fn)
     
     accuracy = accuracy_score(all_targets, all_preds)
     f1 = f1_score(all_targets, all_preds)
@@ -188,8 +192,19 @@ def evaluate_model(model, data_loader, device, threshold=0.5):  # Back to standa
         auc = roc_auc_score(all_targets, all_preds)
     except:
         auc = float('nan')
+
+    # Plot confusion matrix
+    if plot_confusion_matrix:
+        cm = confusion_matrix(all_targets, all_preds)
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.title('Confusion Matrix')
+        plt.savefig('../plots/nn_confusion_matrix.pdf', bbox_inches='tight', dpi=300)
+        plt.show()
+
     
-    return accuracy, f1, auc, fnr
+    return accuracy, f1, auc, fnr, specificity, sensitivity
 
 def main():
     # Get data using prepare_data function
@@ -232,7 +247,7 @@ def main():
     # Train model with fewer epochs
     best_model, train_losses, val_losses = train_model(
         model, train_loader, val_loader, criterion, optimizer, 
-        scheduler=scheduler, num_epochs=100
+        scheduler=scheduler, num_epochs=500
     )
     
     # Load best model and evaluate
@@ -242,12 +257,20 @@ def main():
     # Evaluate on all sets
     print("\nFinal Evaluation:")
     for name, loader in [('Train', train_loader), ('Validation', val_loader), ('Test', test_loader)]:
-        accuracy, f1, auc, fnr = evaluate_model(model, loader, device)
+        accuracy, f1, auc, fnr, specificity, sensitivity = evaluate_model(model, loader, device)
         print(f"{name} Set Metrics:")
         print(f"  Accuracy: {accuracy:.4f}")
         print(f"  F1-Score: {f1:.4f}")
         print(f"  AUC-ROC:  {auc:.4f}")
         print(f"  False Negative Rate: {fnr:.4f}")
+        print(f"  Specificity: {specificity:.4f}")
+        print(f"  Sensitivity: {sensitivity:.4f}")
+
+        if loader == test_loader:
+            print("\nConfusion Matrix:")
+            evaluate_model(model, loader, device, plot_confusion_matrix=True)
+
+
     
     # Plot training history
     plt.figure(figsize=(10, 6))
@@ -258,7 +281,11 @@ def main():
     plt.title('Training History')
     plt.legend()
     plt.grid(True)
+    plt.savefig('../plots/nn_training_history.pdf', bbox_inches='tight', dpi=300)
     plt.show()
+
+    # Save model
+    torch.save(model.state_dict(), 'cspine_model.pth')
 
 if __name__ == "__main__":
     main() 

@@ -7,8 +7,6 @@ from LPCA import LogisticPCA
 # Set colorblind palette
 sns.set_palette("colorblind")
 
-
-
 # Metrics function
 from sklearn.metrics import f1_score, precision_score, recall_score, accuracy_score, roc_auc_score, confusion_matrix, balanced_accuracy_score
 

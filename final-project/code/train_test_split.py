@@ -14,11 +14,14 @@ def site_train_val_test_split(df, target_df, val_size=0.2, test_size=0.2, random
     val_sites = np.random.choice(df.site.unique(), size=int(n_sites * val_size), replace=False)
     remaining_sites = df.site.unique()[~np.isin(df.site.unique(), val_sites)]
     test_sites = np.random.choice(remaining_sites, size=int(n_sites * test_size), replace=False)
-    
+
+
+    # Split data based on sites
     val_df = df[df.site.isin(val_sites)]
     test_df = df[df.site.isin(test_sites)]
     train_df = df[~df.site.isin(np.concatenate((val_sites, test_sites)))]
-    
+
+    # Split target data based on sites
     val_target = target_df[df.site.isin(val_sites)]
     test_target = target_df[df.site.isin(test_sites)]
     train_target = target_df[~df.site.isin(np.concatenate((val_sites, test_sites)))]
@@ -86,6 +89,7 @@ def train_val_test_split(df, target_df, val_size=0.2, test_size=0.2, random_stat
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
+<<<<<<< Updated upstream
 if __name__ == "__main__":
     
     # Assuming df_model has columns:
@@ -147,3 +151,5 @@ if __name__ == "__main__":
     print("Test Specificity:", specificity_test)
     print("Test AUC:", auc_test)
     print("Test FNR:", fnr_test)
+=======
+>>>>>>> Stashed changes

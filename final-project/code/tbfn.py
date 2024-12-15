@@ -44,3 +44,30 @@ if __name__ == "__main__":
     print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
     print(f"F1 Score: {f1_score(y_test, y_pred)}")
     print(f"Recall: {recall_score(y_test, y_pred)}")
+<<<<<<< Updated upstream
+=======
+
+    # Plot confusion matrix
+    cm = confusion_matrix(y_test, y_pred)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    plt.savefig('../plots/tabpfn_confusion_matrix.pdf', bbox_inches='tight', dpi=300)
+    plt.show()
+
+    # Calculate the Specificity and Sensitivity
+    tn, fp, fn, tp = cm.ravel()
+    specificity = tn / (tn + fp)
+    sensitivity = tp / (tp + fn)
+    print(f"Specificity: {specificity}")
+    print(f"Sensitivity: {sensitivity}")
+
+    # Calculate the FNR
+    fnr = fn / (fn + tp)
+    print(f"FNR: {fnr}")
+
+    # Calculate the F1 Score
+    f1 = f1_score(y_test, y_pred)
+    print(f"F1 Score: {f1}")
+>>>>>>> Stashed changes

@@ -3,9 +3,13 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix, roc_auc_score, recall_score, precision_score, f1_score
 from sklearn.model_selection import GridSearchCV
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+sns.set_palette("colorblind")
 
 # Assume df_model now includes 'site' and the eight factors plus 'csi'
-df_model = pd.read_csv("./data/cleaned_eight_factors.csv")
+df_model = pd.read_csv("../data/cleaned_eight_factors.csv")
 
 # Extract features and target
 X = df_model[['altered_mental_status',
@@ -76,3 +80,14 @@ print("Test Precision:", test_precision)
 print("Test F1 Score:", test_f1)
 print("Test AUC:", test_auc)
 print("Test FNR:", test_fnr)
+
+# Plot the confusion matrix
+cm = confusion_matrix(y_test, y_test_pred)
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', annot_kws={'fontsize': 20})
+plt.xlabel('Predicted', fontsize=16)
+plt.ylabel('Actual', fontsize=16)
+plt.title('Confusion Matrix', fontsize=16)
+plt.savefig('../plots/confusion_matrix_baseline.pdf', bbox_inches='tight', dpi=300)
+plt.show()
+
