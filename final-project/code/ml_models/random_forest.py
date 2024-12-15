@@ -2,30 +2,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from train_test_split import site_train_val_test_split, train_val_test_split
-from sklearn.model_selection import train_test_split
-import torch
+from utils import train_val_test_split, process_data
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-from sklearn.utils import resample
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
-from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix
-
-# Use RandomForestClassifier instead of CatBoost or LGBM
 from sklearn.ensemble import RandomForestClassifier
-
-def process_data(df):
-    df.drop(columns=["injurydatetime", "arrivaldate", "arrivaltime"], inplace=True)
-    df = df.rename(columns={"csfractures": "csi"})
-    target = df["csi"]
-    df.drop(columns=["csi"], inplace=True)
-    target.replace(-1, 0, inplace=True)
-    df = pd.get_dummies(df, columns=["controltype"], drop_first=True)
-    df = df.select_dtypes(exclude=['object'])
-    return df, target
+import os
 
 if __name__ == "__main__":
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     sns.set_palette("colorblind")
     df = pd.read_csv('../../data/merged_data_cleaned.csv', low_memory=False)
 
@@ -58,7 +44,7 @@ if __name__ == "__main__":
     grid_search.fit(X_train_resampled, y_train_resampled)
 
     best_model = grid_search.best_estimator_
-    # Re-fit on the entire training set (RandomForest doesn't have the same 'early_stopping' approach)
+    # Re-fit on the entire training set
     best_model.fit(X_train_resampled, y_train_resampled)
 
     # Evaluate on the test set
@@ -72,11 +58,9 @@ if __name__ == "__main__":
     cm = confusion_matrix(y_test, y_pred)
     print("Confusion Matrix:")
     print(cm)
-
-    # Optional: visualize one of the trees in the Random Forest
-    # from sklearn.tree import plot_tree
-    # import matplotlib.pyplot as plt
-    # plt.figure(figsize=(20, 10))
-    # plot_tree(best_model.estimators_[0], filled=True, feature_names=df.columns)
-    # plt.savefig("random_forest_tree.png")
-    # plt.show()
+    
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', annot_kws={"size": 16})
+    plt.xlabel('Predicted', fontsize=14)
+    plt.ylabel('True', fontsize=14)
+    plt.title('Random Forest', fontsize=16)
+    plt.savefig('../../plots/random_forest_confusion_matrix.pdf', dpi=300, bbox_inches='tight')

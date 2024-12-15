@@ -1,33 +1,18 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from train_test_split import site_train_val_test_split, train_val_test_split
-from sklearn.model_selection import train_test_split
-import torch
+from utils import train_val_test_split, process_data
 from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
-from sklearn.utils import resample
 from imblearn.over_sampling import SMOTE
 from sklearn.model_selection import GridSearchCV
-from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix
-
-# Import linear regression
 from sklearn.linear_model import LinearRegression
-
-def process_data(df):
-    df.drop(columns=["injurydatetime", "arrivaldate", "arrivaltime"], inplace=True)
-    df = df.rename(columns={"csfractures": "csi"})
-    target = df["csi"]
-    df.drop(columns=["csi"], inplace=True)
-    target.replace(-1, 0, inplace=True)
-    df = pd.get_dummies(df, columns=["controltype"], drop_first=True)
-    df = df.select_dtypes(exclude=['object'])
-    return df, target
+import os
 
 if __name__ == "__main__":
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
     sns.set_palette("colorblind")
-    df = pd.read_csv('../data/merged_data_cleaned.csv', low_memory=False)
+    df = pd.read_csv('../../data/merged_data_cleaned.csv', low_memory=False)
 
     df, target = process_data(df)
     X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(
@@ -45,13 +30,10 @@ if __name__ == "__main__":
     }
 
     model = LinearRegression()
-
-    # GridSearchCV with scoring='f1' is unusual for linear regression,
-    # but we'll treat the predictions as binary via a 0.5 threshold after the predictions.
     grid_search = GridSearchCV(
         estimator=model,
         param_grid=param_grid,
-        scoring='f1',  # uses binary classification metric on thresholded regression output
+        scoring='f1',
         cv=3,
         n_jobs=-1
     )
@@ -74,8 +56,9 @@ if __name__ == "__main__":
     cm = confusion_matrix(y_test, y_pred)
     print("Confusion Matrix:")
     print(cm)
-
-    # Linear regression doesn't have a tree structure to plot.
-    # If you want to inspect the coefficients:
-    # print("Coefficients:", best_model.coef_)
-    # print("Intercept:", best_model.intercept_)
+    
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', annot_kws={"size": 16})
+    plt.xlabel('Predicted', fontsize=14)
+    plt.ylabel('True', fontsize=14)
+    plt.title('Linear Regression', fontsize=16)
+    plt.savefig('../../plots/linear_confusion_matrix.pdf', dpi=300, bbox_inches='tight')
