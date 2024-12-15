@@ -18,11 +18,13 @@ np.random.seed(8)
 
 def prepare_data():
     # Load data
-    df = pd.read_csv('./data/merged_data_cleaned.csv', low_memory=False)
-    target = pd.read_csv('./data/target.csv')
-    target.columns = target.columns.str.lower()
-    target.rename(columns={"csfractures": "csi"}, inplace=True)
-    
+    df = pd.read_csv('../../data/merged_data_cleaned.csv', low_memory=False)
+    # target = pd.read_csv('../../data/target.csv')
+    # target.columns = target.columns.str.lower()
+    df = df.rename(columns={"csfractures": "csi"}, inplace=True)
+    target = df["csi"]
+    df.drop(columns=["csi"], inplace=True)
+    target.replace(-1, 0, inplace=True)
     # Feature preparation - do this BEFORE splitting
     df_processed = df.drop(columns=["caseid", "studysubjectid", "arrivaltime", "controltype"])
     df_processed = df_processed.select_dtypes(exclude=['object'])  # Remove non-numeric columns

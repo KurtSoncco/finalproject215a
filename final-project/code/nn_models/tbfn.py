@@ -5,7 +5,7 @@ import seaborn as sns
 from train_test_split import site_train_val_test_split, train_val_test_split
 from sklearn.model_selection import train_test_split
 import torch
-from sklearn.metrics import accuracy_score, f1_score, recall_score
+from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from sklearn.utils import resample
 from imblearn.over_sampling import SMOTE
 from sklearn.decomposition import PCA
@@ -44,3 +44,11 @@ if __name__ == "__main__":
     print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
     print(f"F1 Score: {f1_score(y_test, y_pred)}")
     print(f"Recall: {recall_score(y_test, y_pred)}")
+    print(f"Precision: {precision_score(y_test, y_pred)}")
+    
+    cm = confusion_matrix(y_test, y_pred)
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    plt.savefig('TabPFN confusion_matrix.pdf')

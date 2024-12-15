@@ -27,7 +27,7 @@ def process_data(df):
 
 if __name__ == "__main__":
     sns.set_palette("colorblind")
-    df = pd.read_csv('../data/merged_data_cleaned.csv', low_memory=False)
+    df = pd.read_csv('../../data/merged_data_cleaned.csv', low_memory=False)
 
     df, target = process_data(df)
     X_train, X_val, X_test, y_train, y_val, y_test = train_val_test_split(

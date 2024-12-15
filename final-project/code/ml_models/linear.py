@@ -21,7 +21,7 @@ def process_data(df):
     target = df["csi"]
     df.drop(columns=["csi"], inplace=True)
     target.replace(-1, 0, inplace=True)
-    df = df.drop(columns=["controltype"])
+    df = pd.get_dummies(df, columns=["controltype"], drop_first=True)
     df = df.select_dtypes(exclude=['object'])
     return df, target
 

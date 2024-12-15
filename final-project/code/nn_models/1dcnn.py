@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from train_test_split import site_train_val_test_split, train_val_test_split
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, f1_score, recall_score, confusion_matrix, precision_score
 from sklearn.utils import resample
 from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
@@ -33,12 +33,14 @@ class CNN_1d(nn.Module):
     def __init__(self, num_features):
         super().__init__()
         self.fc_in = nn.Linear(num_features, 1024)
-        self.dropout = nn.Dropout(0.2)
+        self.dropout = nn.Dropout(0.1)
         self.conv1 = nn.Conv1d(in_channels=16, out_channels=16, kernel_size=5)
         self.pool1 = nn.MaxPool1d(kernel_size=2)
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=16, kernel_size=5)
         self.pool2 = nn.MaxPool1d(kernel_size=2)
-        self.fc_hidden = nn.Linear(208, 16)
+        self.conv3 = nn.Conv1d(in_channels=16, out_channels=16, kernel_size=5)
+        self.pool3 = nn.MaxPool1d(kernel_size=2)
+        self.fc_hidden = nn.Linear(64, 16)
         self.fc_out = nn.Linear(16, 1)
         self.sigmoid = nn.Sigmoid()
 
@@ -52,6 +54,8 @@ class CNN_1d(nn.Module):
         x = self.pool1(x)
         x = self.conv2(x)
         x = self.pool2(x)
+        x = self.conv3(x)
+        x = self.pool3(x)
         x = x.view(x.size(0), -1)
         
         x = self.fc_hidden(x)
@@ -111,9 +115,10 @@ def evaluate_model(model, X_test, y_test, device='cpu'):
     acc = accuracy_score(y_true, preds)
     f1 = f1_score(y_true, preds)
     recall = recall_score(y_true, preds)
+    precison = precision_score(y_true, preds)
     cm = confusion_matrix(y_true, preds)
     
-    return acc, f1, recall, cm
+    return acc, f1, recall, cm, precison
 
 def plot_conv1d_filters(model, layer_name='conv'):
     """
@@ -141,7 +146,7 @@ def plot_conv1d_filters(model, layer_name='conv'):
 
 if __name__ == "__main__":
     sns.set_palette("colorblind")
-    df = pd.read_csv('../data/merged_data_cleaned.csv', low_memory=False)
+    df = pd.read_csv('../../data/merged_data_cleaned.csv', low_memory=False)
 
     df, target = process_data(df)
 
@@ -176,14 +181,21 @@ if __name__ == "__main__":
         epochs=30, batch_size=32, device='cpu'
     )
 
-    acc, f1, rec, cm = evaluate_model(model, X_test, y_test, device='cpu')
+    acc, f1, rec, cm, precision = evaluate_model(model, X_test, y_test, device='cpu')
     print(f"\nTest Accuracy: {acc:.4f}")
     print(f"Test F1 Score: {f1:.4f}")
     print(f"Test Recall: {rec:.4f}")
     print(f"Confusion Matrix:\n{cm}")
+    print(f"Precision: {precision:.4f}")
     X_test_tensor = torch.from_numpy(X_test).float()
     output = model(X_test_tensor)
     dot = make_dot(output, params=dict(model.named_parameters()))
     dot.render("cnn_architecture", format="pdf")
-    
+    # Plot and save the confusion matrix
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=['Predicted False', 'Predicted True'], yticklabels=['Actual False', 'Actual True'])
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    plt.savefig('1dcnn_confusion_matrix.pdf')
 
