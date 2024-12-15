@@ -2,10 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from train_test_split import site_train_val_test_split, train_val_test_split
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, f1_score, recall_score, confusion_matrix
-from sklearn.utils import resample
+from utils import train_val_test_split, process_data
+from sklearn.metrics import accuracy_score, f1_score, recall_score, confusion_matrix, precision_score
 from imblearn.over_sampling import SMOTE
 from sklearn.preprocessing import StandardScaler
 import torch
@@ -13,32 +11,47 @@ import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from torchviz import make_dot
-
-def process_data(df):
-    # Drop unused columns
-    df.drop(columns=["injurydatetime", "arrivaldate", "arrivaltime"], inplace=True)
-    # Rename column for convenience
-    df = df.rename(columns={"csfractures": "csi"})
-    target = df["csi"]
-    df.drop(columns=["csi"], inplace=True)
-    # Convert -1 in target to 0 (assuming binary classification)
-    target.replace(-1, 0, inplace=True)
-    # Encode controltype as dummy variables
-    df = pd.get_dummies(df, columns=["controltype"], drop_first=True)
-    # Keep only numeric columns
-    df = df.select_dtypes(exclude=['object'])
-    return df, target
+import os
 
 class CNN_1d(nn.Module):
+    """
+    A 1-dimensional Convolutional Neural Network (CNN) for binary classification.
+
+    Args:
+        num_features (int): The number of input features.
+
+    Attributes:
+        fc_in (nn.Linear): Fully connected input layer.
+        dropout (nn.Dropout): Dropout layer with a probability of 0.1.
+        conv1 (nn.Conv1d): First 1D convolutional layer.
+        pool1 (nn.MaxPool1d): First max pooling layer.
+        conv2 (nn.Conv1d): Second 1D convolutional layer.
+        pool2 (nn.MaxPool1d): Second max pooling layer.
+        conv3 (nn.Conv1d): Third 1D convolutional layer.
+        pool3 (nn.MaxPool1d): Third max pooling layer.
+        fc_hidden (nn.Linear): Fully connected hidden layer.
+        fc_out (nn.Linear): Fully connected output layer.
+        sigmoid (nn.Sigmoid): Sigmoid activation function.
+
+    Methods:
+        forward(x):
+            Defines the forward pass of the network.
+            Args:
+                x (torch.Tensor): Input tensor.
+            Returns:
+                torch.Tensor: Output tensor after passing through the network.
+    """
     def __init__(self, num_features):
         super().__init__()
         self.fc_in = nn.Linear(num_features, 1024)
-        self.dropout = nn.Dropout(0.2)
+        self.dropout = nn.Dropout(0.1)
         self.conv1 = nn.Conv1d(in_channels=16, out_channels=16, kernel_size=5)
         self.pool1 = nn.MaxPool1d(kernel_size=2)
         self.conv2 = nn.Conv1d(in_channels=16, out_channels=16, kernel_size=5)
         self.pool2 = nn.MaxPool1d(kernel_size=2)
-        self.fc_hidden = nn.Linear(208, 16)
+        self.conv3 = nn.Conv1d(in_channels=16, out_channels=16, kernel_size=5)
+        self.pool3 = nn.MaxPool1d(kernel_size=2)
+        self.fc_hidden = nn.Linear(64, 16)
         self.fc_out = nn.Linear(16, 1)
         self.sigmoid = nn.Sigmoid()
 
@@ -52,8 +65,9 @@ class CNN_1d(nn.Module):
         x = self.pool1(x)
         x = self.conv2(x)
         x = self.pool2(x)
+        x = self.conv3(x)
+        x = self.pool3(x)
         x = x.view(x.size(0), -1)
-        
         x = self.fc_hidden(x)
         x = self.fc_out(x)
         x = self.sigmoid(x)
@@ -61,6 +75,9 @@ class CNN_1d(nn.Module):
 
 def train_model(model, optimizer, criterion, X_train, y_train, X_val, y_val,
                 epochs=30, batch_size=32, device='cpu'):
+    '''
+    Trains the model on the training set and evaluates it on the validation set.
+    '''
     model.to(device)
     X_train_tensor = torch.from_numpy(X_train).float().to(device)
     y_train_tensor = torch.from_numpy(y_train).float().to(device)
@@ -98,6 +115,9 @@ def train_model(model, optimizer, criterion, X_train, y_train, X_val, y_val,
               f"| Val Loss: {val_loss:.4f}")
 
 def evaluate_model(model, X_test, y_test, device='cpu'):
+    '''
+    Evaluates the model on the test set.
+    '''
     model.eval()
     model.to(device)
     X_test_tensor = torch.from_numpy(X_test).float().to(device)
@@ -111,14 +131,16 @@ def evaluate_model(model, X_test, y_test, device='cpu'):
     acc = accuracy_score(y_true, preds)
     f1 = f1_score(y_true, preds)
     recall = recall_score(y_true, preds)
+    precison = precision_score(y_true, preds)
     cm = confusion_matrix(y_true, preds)
     
-    return acc, f1, recall, cm
+    return acc, f1, recall, cm, precison
 
 def plot_conv1d_filters(model, layer_name='conv'):
     """
     model: Your PyTorch model
     layer_name: Name of the Conv1d layer to visualize
+    Note: this is mainly used for debugging purposes. The model wasn't fitting the data at first
     """
     # Get the layer by its name or attribute
     conv_layer = getattr(model, layer_name)  # e.g., model.conv1
@@ -141,7 +163,8 @@ def plot_conv1d_filters(model, layer_name='conv'):
 
 if __name__ == "__main__":
     sns.set_palette("colorblind")
-    df = pd.read_csv('../data/merged_data_cleaned.csv', low_memory=False)
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    df = pd.read_csv('../../data/merged_data_cleaned.csv', low_memory=False)
 
     df, target = process_data(df)
 
@@ -158,7 +181,7 @@ if __name__ == "__main__":
     X_test = scaler.transform(X_test)
 
     # Reshape to (batch_size, 1, num_features)
-    num_features = X_train_resampled.shape[1]  # Ideally 300 for the param counts to match
+    num_features = X_train_resampled.shape[1]
     X_train_resampled = np.expand_dims(X_train_resampled, axis=1)
     X_val = np.expand_dims(X_val, axis=1)
     X_test = np.expand_dims(X_test, axis=1)
@@ -176,14 +199,19 @@ if __name__ == "__main__":
         epochs=30, batch_size=32, device='cpu'
     )
 
-    acc, f1, rec, cm = evaluate_model(model, X_test, y_test, device='cpu')
+    acc, f1, rec, cm, precision = evaluate_model(model, X_test, y_test, device='cpu')
     print(f"\nTest Accuracy: {acc:.4f}")
     print(f"Test F1 Score: {f1:.4f}")
     print(f"Test Recall: {rec:.4f}")
     print(f"Confusion Matrix:\n{cm}")
+    print(f"Precision: {precision:.4f}")
     X_test_tensor = torch.from_numpy(X_test).float()
     output = model(X_test_tensor)
     dot = make_dot(output, params=dict(model.named_parameters()))
     dot.render("cnn_architecture", format="pdf")
-    
-
+    # Plot and save the confusion matrix
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion matrix\n Testing set with 1D CNN')
+    plt.savefig('../../plots/1dcnn_confusion_matrix.pdf', dpi=300, bbox_inches='tight')

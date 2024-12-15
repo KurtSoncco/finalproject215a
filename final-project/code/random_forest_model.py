@@ -23,7 +23,7 @@ X = df_model[['altered_mental_status',
 y = df_model['csi'].values
 
 # site_train_val_test_split function defined previously to split based on site
-from train_test_split import site_train_val_test_split
+from ml_models.utils import site_train_val_test_split
 
 X_train, X_val, X_test, y_train, y_val, y_test = site_train_val_test_split(df_model, df_model[['studysubjectid','csi']], 
                                                                           val_size=0.2, test_size=0.2, random_state=42)
