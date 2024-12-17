@@ -16,7 +16,9 @@ Jacob Kim worked on:
 - PCA
 - Cleaning process
 
-Charlie Chen worked on:
-- CatBoost model
-- Cleaning process
+Charlie Cheng worked on:
+- Implementation of all the ML and NN models under ml_models and nn_models folders (6 ML models and 3 NN models)
+- Data cleaning and codebase origanizing
+- Writing up the report
+- Model interpretations and performance analysis
 
