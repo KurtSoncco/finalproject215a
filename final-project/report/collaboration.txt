@@ -2,14 +2,15 @@ We have all agreed on these attributions:
 
 Kurt Soncco worked on:
 - EDA and cleaning process
-- Logistic PCA and Logistic Regression
-- Revision of State of the art papers
+- Logistic PCA and Logistic Regression (Not included in the report)
+- Revision of State of the Art papers
 - Stability tests
 - Train and test split
 - Writing up the report
 
 Finn Metz worked on:
-- Random Forest & NN Model
+- Random Forest (Base Model)
+- NN model (MLP)
 - Cleaning process
 - Writing up the report
 
