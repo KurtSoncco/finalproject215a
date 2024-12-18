@@ -246,7 +246,12 @@ Additionally, we analyzed the decision boundary of the best performing model to 
 
 
 \subsection{Machine Learning Models}
-We've tried a handful of different ML models when dealing with the data, including the classic logistic regression, SVM, and PCA/LPCA. Below is a table of the performance of all different models. The training data also uses SMOTE for oversampling to balance the training set. The accuracy, precision, recall and f1-score is measured on a separate test-set after training the model on the training set. All models are tuned to select their best set of hyperparameters using 3 folds cross-validation. Noticably LightGBM model managed to figured out all cases correctly except one in the testing set, which is really impressive.
+We've tried a handful of different ML models when dealing with the data, including the classic logistic regression, 
+SVM, and PCA/LPCA. Below is a table of the performance of all different models. 
+The training data also uses SMOTE for oversampling to balance the training set. 
+The accuracy, precision, recall and f1-score is measured on a separate test-set after training the model on the training set. 
+All models are tuned to select their best set of hyperparameters using 3 folds cross-validation. 
+Noticeably, LightGBM model managed to figured out all cases correctly except one in the testing set, which is really impressive.
 
 \begin{table}[H]
 \centering
@@ -377,11 +382,11 @@ The results of this model, using our choice of metrics, along with the specifici
 
 The transformer implementation is based on Transformer Prediction Framework, referenced in the following paper \cite{hollmann2022tabpfn}. 
 The model is based on in-context learning, where the tabular data is inferred by pretrained transformer, 
-and then uses Bayessian updates to infer the posterior distribution of the prediction and parameters based on the 
+and then uses Bayesian updates to infer the posterior distribution of the prediction and parameters based on the 
 new information. The model is trained on the same data as the Vanilla Neural Network, with the same data splitting and resampling.
 
 The proposed approach is significantly better than the Vainilla approach, as it can reduce both 
-the specifiticity and sensitivity, as shown in the confusion matrix below.
+the specificity and sensitivity, as shown in the confusion matrix below.
 
 \begin{figure}[H]
     \centering
@@ -403,16 +408,20 @@ The results and the metrics of this model is shown below:
 \bottomrule
 \end{tabular}
 \caption{Performance of Transformer Implementation}%
+\label{table:Tabpfn-metrics}
 \end{table}
 
-As observed, the Transformer model is significantly better than the Vanilla Neural Network, or any Machine Learning model.
+As observed in Table \ref{table:Tabpfn-metrics}, the Transformer model is significantly better than the Vanilla Neural Network, or any Machine Learning model.
 The Transformer model not only outperforms the other models in terms of F1-Score, but also maintains a high specificity and sensitivity.
 Additionally, the False Negative Rate (FNR) is significantly lower than the other models. 
 
-We have also tried using a 1D CNN model to do data classification. Leveraging the translational equivariance property of CNNs, the model can capture locational features between neighboring columns inside the dataset. Since a lot of our data has very high correleation to its neighboring column, the model can utilize this information and do classifications based on that.
+We have also tried using a 1D CNN model to do data classification. Leveraging the translational 
+equivariance property of CNNs, the model can capture locational features between neighboring 
+columns inside the dataset. Since a lot of our data has very high correlation to its neighboring column, 
+the model can utilize this information and do classifications based on that.
 
-There's a good amount of stuff still open to further dicussion and testing, including the use of MaxPooling to do dimension reduction, number of channels for the convolution layers and the kernal size. So far we've selected the parameters based on performance of f1-score on the validation set.
-
+There's a good amount of stuff still open to further discussion and testing, including the use of Max Pooling to do dimension reduction, number of channels for the convolution layers and the kernel size. 
+So far we've selected the parameters based on performance of F1-score on the validation set.
 \begin{table}[H]
 \centering
 \footnotesize
