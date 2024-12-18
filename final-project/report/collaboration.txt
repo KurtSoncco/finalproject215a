@@ -6,15 +6,18 @@ Kurt Soncco worked on:
 - Revision of State of the art papers
 - Stability tests
 - Train and test split
+- Writing up the report
 
 Finn Metz worked on:
 - Random Forest & NN Model
 - Cleaning process
+- Writing up the report
 
 Jacob Kim worked on:
 - SVM and Other MLs (RF, Gradient Boosting)
 - PCA
 - Cleaning process
+- Writing up the report
 
 Charlie Cheng worked on:
 - Implementation of all the ML and NN models under ml_models and nn_models folders (6 ML models and 3 NN models)

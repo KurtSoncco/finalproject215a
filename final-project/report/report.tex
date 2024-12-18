@@ -321,9 +321,24 @@ Sigmoid & & \\
 \caption{MLP architecture}
 \end{table}
 
-The optimizer choice was Adam, based on the versatility and stability on its approach. The loss function used is BCELoss. The model was trained on 30 epochs. 
+The optimizer choice was Adam, based on the versatility and stability on this approach. 
+The loss function used is BCEWithLogitsLoss, with the weight of the inverse of frequency of the 
+label, to try to balance the data. A learning rate scheduler was implemented to push the model to 
+keep learning and find a local minimum. A Early Stopper approach was implemented as well to avoid 
+over-fitting if the model is not reducing the loss. In Figure \ref{fig:nn-loss}, the training and
+validation loss history is shown. As observed, the total number of epochs was 55, with a patience of 10 epochs.
+The model has early stopped the training as the validation loss was not decreasing.
 
-The confusion matrix obtained by the model is shown below:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{../plots/NN_loss_graph.png}
+    \caption{Training and Validation Loss History}
+    \label{fig:nn-loss}
+\end{figure}
+
+The confusion matrix obtained by the model is shown below in Figure \ref{fig:cm-nn}. 
+We can observe that the model is not able to generalize well, as the number of False Negatives is
+higher than the number of True Positives.
 
 \begin{figure}[H]
     \centering
@@ -347,9 +362,13 @@ The results of this model, using our choice of metrics, along with the specifici
 \caption{Performance of MLP on Test Set}%
 \end{table}
 
-The TabPFN implementation is referenced in the following paper \cite{hollmann2022tabpfn}. The model is based on in-context learning, where the tabular data is inferred by pretrained trasnformer, and then uses Bayessian updates to infer the posterior distribution if the prediction and parameters based on the new information. 
+The transformer implementation is based on Transformer Prediction Framework, referenced in the following paper \cite{hollmann2022tabpfn}. 
+The model is based on in-context learning, where the tabular data is inferred by pretrained transformer, 
+and then uses Bayessian updates to infer the posterior distribution of the prediction and parameters based on the 
+new information. The model is trained on the same data as the Vanilla Neural Network, with the same data splitting and resampling.
 
-The proposed approach is significantly better than the MLP approach, as it can reduce both the specificity and sensitivity. One of the good thing about tabPFN is that it requires no training and fine-tuning for the dataset we're using into the transformer training loop. The model takes in a pre-trained checkpoint and output the posterior distribution based on in-context learning's results. 
+The proposed approach is significantly better than the Vainilla approach, as it can reduce both 
+the specifiticity and sensitivity, as shown in the confusion matrix below.
 
 \begin{figure}[H]
     \centering
@@ -365,13 +384,17 @@ The results and the metrics of this model is shown below:
 \footnotesize
 \begin{tabular}{lllll}
 \toprule
-\textbf{Precision} & \textbf{Recall} & \textbf{Accuracy} &  \textbf{F1-Score}\\
+\textbf{Sensitivity} & \textbf{Specificity} & \textbf{Accuracy} &  \textbf{F1-Score}\\
 \midrule
-0.821 & 0.809 & 0.962 & 0.815  \\
+0.6760 & 0.966 & 0.9325 & 0.6865  \\
 \bottomrule
 \end{tabular}
-\caption{Performance of TabPFN on Test Set}%
+\caption{Performance of Transformer Implementation}%
 \end{table}
+
+As observed, the Transformer model is significantly better than the Vanilla Neural Network, or any Machine Learning model.
+The Transformer model not only outperforms the other models in terms of F1-Score, but also maintains a high specificity and sensitivity.
+Additionally, the False Negative Rate (FNR) is significantly lower than the other models. 
 
 We have also tried using a 1D CNN model to do data classification. Leveraging the translational equivariance property of CNNs, the model can capture locational features between neighboring columns inside the dataset. Since a lot of our data has very high correleation to its neighboring column, the model can utilize this information and do classifications based on that.
 
@@ -453,12 +476,65 @@ Here's a table of columns referring to the decision making process of the model:
 
 LightGBM does not assume the closer a node is to the root, the more important it is. It's generally selecting the most important features to split on, and the feature importance is calculated based on the number of times a feature is used to split the data. Clearly that the selected columns play a crucial role in dividing up all different forms of data, and most of them are from the Injury classification document. 
 
+\section{Interpretability}
+
+Additinally, we have observed the use of the Transformer as a feasible model for the decision rule. This section will address if our model is interpretable to provide
+trust and confidence to the medical practitioners. The model is based on the Tabular Prediction Framework (TabPfn) \cite{hollmann2022tabpfn}, 
+which relies on the prior training on sequential data. However, as any Deep Learning model, the model is a black box,
+and it is hard to interpret the features and its importance. 
+
+However, according to Rundel et al. \cite{rundel2024interpretable}, they proposed a set tools to interpret the results of the model.
+In this case, we will implement a Decision Curve Analysis (DCA) to understand the model's decision making process.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{../plots/tabpfn_decision_curve.pdf}
+    \caption{Decision Curve Analysis}
+    \label{fig:dca}
+\end{figure}
+
+This plot helps use realize how the model improves for intervention all the time, where the model inferes that even if the threshold is high, it is smart to not 
+always decide to immobilize the patient \cite{vickers2019simple}. In this case, the threshold 
+represents the amount of worry the model has to have to decide to immobilize the patient. Therefore, this graph 
+can help the medical practitioners to understand the model's decision making process.
+
+However, this implementation does not uncover the overall importance of the features, just how the model is making the decision.
+This is a main drawback for the model, as the medical practitioners might not trust the model if they do not understand how the model is making the decision.
+Hopefully, in a real world application, using expert notions and domain knowledge, the input feature space of the model can 
+be reduced to a more interpretable space, and the model can be used as a decision rule.
+
 \section{Stability}
 \subsection{Model Perturbation}
 The model perturbation ablation setup starts from the parameter tuning stage, which when we were doing hyperparameter tuning, we used 3 fold cross-validation to select the best set of hyperparameters. The model might have some structural difference since the number of depth is changing, the overall performance is not changing significantly (as of overfitting super bad or underfitting). The model itself is still capable of generalizing, though the performance might be slightly different but not affecting that much.
 
 An example for this would be if we use depth of 2 instead of 6 for the LightGBM model, the f1 score drops to 0.93 from 0.99. However, the model is still capable of generalizing and predicting the correct value.
 
+For the model perturbation in the Transformer, we tried the following:
+\begin{itemize}
+    \item Train the model with a different loss function, e.g. Categorical Cross-Entropy, to see if the model can generalize well.
+    \item Train the model with different set of hyperparameters, by using a different set of learning rate, batch size, and number of epochs.
+\end{itemize}
+
+The results of the model perturbation is shown below:
+
+\begin{table}[H]
+\centering
+\footnotesize
+\begin{tabular}{lllll}
+\toprule
+\textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} &  \textbf{F1-Score}\\
+\midrule
+Model & 0.50 & 0.81  & 0.90 & 0.85  \\
+Model (Different Loss) & 0.489 & 0.745  & 0.89 & 0.745  \\
+Model (Different Hyperparameters) & 0.475 & 0.704  & 0.875 & 0.812  \\
+Model (Different number of PCA components) & 0.415 & 0.652 & 0.90 & 0.65  \\
+\bottomrule
+\end{tabular}
+\caption{Performance of Different Perturbations}%
+\end{table}
+
+As shown, the model seems to be stable under model choices. However, we might not be entirely sure if the model is stable under different
+data perturbations. Therefore, we will proceed to the next section to analyze the data perturbation.
 
 \subsection{Data Perturbation}
 Note: We've tried doing data perturbation using LightGBM, but the results are not really interesting enough (the f1-score and accuracy are not dropping drastically). From here we went with TabPFN method (we also just want to use something different as well to see how it performs), which shows something more interesting in terms of the performance. \\

@@ -1,0 +1,71 @@
+\begin{thebibliography}{10}
+
+\bibitem{ham2014pressure}
+Wietske Ham, Lisette Schoonhoven, Marieke~J Schuurmans, and Luke~PH Leenen.
+\newblock Pressure ulcers from spinal immobilization in trauma patients: a
+  systematic review.
+\newblock {\em Journal of Trauma and Acute Care Surgery}, 76(4):1131--1141,
+  2014.
+
+\bibitem{abram2010routine}
+Simon Abram and Cristopher Bulstrode.
+\newblock Routine spinal immobilization in trauma patients: what are the
+  advantages and disadvantages?
+\newblock {\em the surgeon}, 8(4):218--222, 2010.
+
+\bibitem{ottosen2019patient}
+Camilla~Ikast Ottosen, Jacob Steinmetz, Mo~Haslund Larsen, Josefine~S
+  Baekgaard, and Lars~S Rasmussen.
+\newblock Patient experience of spinal immobilisation after trauma.
+\newblock {\em Scandinavian journal of trauma, resuscitation and emergency
+  medicine}, 27:1--6, 2019.
+
+\bibitem{brown2001cervical}
+Rebeccah~L Brown, Margie~A Brunn, and Victor~F Garcia.
+\newblock Cervical spine injuries in children: a review of 103 patients treated
+  consecutively at a level 1 pediatric trauma center.
+\newblock {\em Journal of pediatric surgery}, 36(8):1107--1114, 2001.
+
+\bibitem{leonard2011factors}
+Julie~C Leonard, Nathan Kuppermann, Cody Olsen, Lynn Babcock-Cimpello, Kathleen
+  Brown, Prashant Mahajan, Kathleen~M Adelgais, Jennifer Anders, Dominic
+  Borgialli, Aaron Donoghue, et~al.
+\newblock Factors associated with cervical spine injury in children after blunt
+  trauma.
+\newblock {\em Annals of emergency medicine}, 58(2):145--155, 2011.
+
+\bibitem{stiell2001canadian}
+Ian~G Stiell, George~A Wells, Katherine~L Vandemheen, Catherine~M Clement,
+  Howard Lesiuk, Valerie~J De~Maio, Andreas Laupacis, Michael Schull, R~Douglas
+  McKnight, Richard Verbeek, et~al.
+\newblock The canadian c-spine rule for radiography in alert and stable trauma
+  patients.
+\newblock {\em Jama}, 286(15):1841--1848, 2001.
+
+\bibitem{michaleff2012accuracy}
+Zoe~A Michaleff, Chris~G Maher, Arianne~P Verhagen, Trudy Rebbeck, and
+  Chung-Wei~Christine Lin.
+\newblock Accuracy of the canadian c-spine rule and nexus to screen for
+  clinically important cervical spine injury in patients following blunt
+  trauma: a systematic review.
+\newblock {\em Cmaj}, 184(16):E867--E876, 2012.
+
+\bibitem{hicks2022evaluation}
+Steven~A Hicks, Inga Str{\"u}mke, Vajira Thambawita, Malek Hammou, Michael~A
+  Riegler, P{\aa}l Halvorsen, and Sravanthi Parasa.
+\newblock On evaluation metrics for medical applications of artificial
+  intelligence.
+\newblock {\em Scientific reports}, 12(1):5979, 2022.
+
+\bibitem{svm}
+Corinna Cortes and Vladimir Vapnik.
+\newblock Support-vector networks.
+\newblock {\em Machine Learning}, 20(3):273--297, 1995.
+
+\bibitem{hollmann2022tabpfn}
+Noah Hollmann, Samuel M{\"u}ller, Katharina Eggensperger, and Frank Hutter.
+\newblock Tabpfn: A transformer that solves small tabular classification
+  problems in a second.
+\newblock {\em arXiv preprint arXiv:2207.01848}, 2022.
+
+\end{thebibliography}
