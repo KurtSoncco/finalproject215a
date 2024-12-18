@@ -7,7 +7,7 @@ from train_test_split import train_val_test_split
 import torch
 from sklearn.metrics import accuracy_score, f1_score, recall_score
 from sklearn.utils import resample
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE, ADASYN, BorderlineSMOTE, KMeansSMOTE, RandomOverSampler, SMOTENC, SVMSMOTE
 from sklearn.decomposition import PCA
 from sklearn.metrics import confusion_matrix
 from tabpfn import TabPFNClassifier
@@ -86,14 +86,6 @@ if __name__ == "__main__":
             sensitivity_stab1.append(sensitivity)
             fnr_stab1.append(fnr)
 
-            # Plot confusion matrix
-            plt.figure(figsize=(8, 6))
-            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-            plt.xlabel('Predicted')
-            plt.ylabel('Actual')
-            plt.title('Confusion Matrix for site with less prevalence')
-            plt.savefig(f'../plots/tabpfn_confusion_matrix_stab1_{i}.pdf', bbox_inches='tight', dpi=300)
-
         # Plot of stability 1 metrics
         plt.figure(figsize=(8, 6))
         plt.plot(range(1,6), f1_score_stab1, label='F1 Score')
@@ -118,11 +110,86 @@ if __name__ == "__main__":
     sensitivity_stab2 = []
     fnr_stab2 = []
 
-    for ratio in subsampling_ratios:
-        X_train, X_test, y_train, y_test = subsampling_train_test_split(df, target, subsample_ratio = ratio)
+    stab2 = False
 
-        ## Use SMOTE to handle class imbalance
-        smote = SMOTE(random_state=42)
+    if stab2:
+        for ratio in subsampling_ratios:
+            X_train, X_test, y_train, y_test = subsampling_train_test_split(df, target, subsample_ratio = ratio)
+
+            ## Use SMOTE to handle class imbalance
+            smote = SMOTE(random_state=42)
+            X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
+            # Apply PCA to reduce the number of features to 100
+            pca = PCA(n_components=100)
+            X_train_resampled = pca.fit_transform(X_train_resampled)
+            X_test = pca.transform(X_test)
+
+            # Initialize TabPFNClassifier
+            model = TabPFNClassifier(device='cpu')
+            model.fit(X_train_resampled, y_train_resampled, overwrite_warning=True)
+
+            # Predict on the test data
+            y_pred = model.predict(X_test)
+            print(f"Accuracy: {accuracy_score(y_test, y_pred)}")
+            print(f"F1 Score: {f1_score(y_test, y_pred)}")
+            print(f"Recall: {recall_score(y_test, y_pred)}")
+            # Calculate the Specificity and Sensitivity
+            cm = confusion_matrix(y_test, y_pred)
+            tn, fp, fn, tp = cm.ravel()
+            specificity = tn / (tn + fp)
+            sensitivity = tp / (tp + fn)
+            print(f"Specificity: {specificity}")
+            print(f"Sensitivity: {sensitivity}")
+
+            # Calculate the FNR
+            fnr = fn / (fn + tp)
+            print(f"FNR: {fnr}")
+
+            # Append the metrics to the lists
+            accuracy_stab2.append(accuracy_score(y_test, y_pred))
+            f1_score_stab2.append(f1_score(y_test, y_pred))
+            recall_stab2.append(recall_score(y_test, y_pred))
+            specificity_stab2.append(specificity)
+            sensitivity_stab2.append(sensitivity)
+            fnr_stab2.append(fnr)
+
+        # Plot of stability 2 metrics
+        plt.figure(figsize=(8, 6))
+        plt.plot(subsampling_ratios, f1_score_stab2, label='F1 Score')
+        plt.plot(subsampling_ratios, specificity_stab2, label='Specificity')
+        plt.plot(subsampling_ratios, sensitivity_stab2, label='Sensitivity')
+        plt.plot(subsampling_ratios, fnr_stab2, label='FNR')
+        plt.xlabel('Subsampling Ratios')
+        plt.ylabel('Metrics')
+        plt.title('Stability 2 Metrics')
+        plt.legend()
+        plt.savefig('../plots/tabpfn_stability2_metrics.pdf', bbox_inches='tight', dpi=300)
+
+
+    # Stability 3: SMOTE techniques
+
+    smote_techniques = [SMOTE, ADASYN, BorderlineSMOTE, SVMSMOTE]
+
+    accuracy_stab3 = []
+    f1_score_stab3 = []
+    recall_stab3 = []
+    specificity_stab3 = []
+    sensitivity_stab3 = []
+    fnr_stab3 = []
+
+    # Eliminate SubjectID
+    target.drop(columns=['studysubjectid'], inplace=True)
+
+    # Ravel the target
+    target = target.values.ravel()
+
+    for smote_technique in smote_techniques:
+        # Split the data
+        X_train, X_test, y_train, y_test = train_test_split(df, target, test_size=0.2, random_state=42)
+
+
+        # Use the current SMOTE technique to handle class imbalance
+        smote = smote_technique(random_state=42)
         X_train_resampled, y_train_resampled = smote.fit_resample(X_train, y_train)
         # Apply PCA to reduce the number of features to 100
         pca = PCA(n_components=100)
@@ -151,29 +218,30 @@ if __name__ == "__main__":
         print(f"FNR: {fnr}")
 
         # Append the metrics to the lists
-        accuracy_stab2.append(accuracy_score(y_test, y_pred))
-        f1_score_stab2.append(f1_score(y_test, y_pred))
-        recall_stab2.append(recall_score(y_test, y_pred))
-        specificity_stab2.append(specificity)
-        sensitivity_stab2.append(sensitivity)
-        fnr_stab2.append(fnr)
+        accuracy_stab3.append(accuracy_score(y_test, y_pred))
+        f1_score_stab3.append(f1_score(y_test, y_pred))
+        recall_stab3.append(recall_score(y_test, y_pred))
+        specificity_stab3.append(specificity)
+        sensitivity_stab3.append(sensitivity)
+        fnr_stab3.append(fnr)
 
         # Plot confusion matrix
-        plt.figure(figsize=(8, 6))
-        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
-        plt.xlabel('Predicted')
-        plt.ylabel('Actual')
-        plt.title('Confusion Matrix for site with less prevalence')
-        plt.savefig(f'../plots/tabpfn_confusion_matrix_stab2_{ratio}.pdf', bbox_inches='tight', dpi=300)
+        #plt.figure(figsize=(8, 6))
+        #sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+        #plt.xlabel('Predicted')
+        #plt.ylabel('Actual')
+        #plt.title(f'Confusion Matrix for {smote_technique.__name__}')
+        #plt.savefig(f'../plots/tabpfn_confusion_matrix_stab3_{smote_technique.__name__}.pdf', bbox_inches='tight', dpi=300)
 
-    # Plot of stability 2 metrics
+    # Plot of stability 3 metrics
     plt.figure(figsize=(8, 6))
-    plt.plot(subsampling_ratios, f1_score_stab2, label='F1 Score')
-    plt.plot(subsampling_ratios, specificity_stab2, label='Specificity')
-    plt.plot(subsampling_ratios, sensitivity_stab2, label='Sensitivity')
-    plt.plot(subsampling_ratios, fnr_stab2, label='FNR')
-    plt.xlabel('Subsampling Ratios')
+    plt.plot([tech.__name__ for tech in smote_techniques], f1_score_stab3, label='F1 Score')
+    plt.plot([tech.__name__ for tech in smote_techniques], specificity_stab3, label='Specificity')
+    plt.plot([tech.__name__ for tech in smote_techniques], sensitivity_stab3, label='Sensitivity')
+    plt.plot([tech.__name__ for tech in smote_techniques], fnr_stab3, label='FNR')
+    plt.xlabel('SMOTE Techniques')
     plt.ylabel('Metrics')
-    plt.title('Stability 2 Metrics')
+    plt.title('Stability 3 Metrics')
     plt.legend()
-    plt.savefig('../plots/tabpfn_stability2_metrics.pdf', bbox_inches='tight', dpi=300)
+    plt.xticks(rotation=45)
+    plt.savefig('../plots/tabpfn_stability3_metrics.pdf', bbox_inches='tight', dpi=300)

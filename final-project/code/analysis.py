@@ -8,10 +8,17 @@ def run_file(file_name):
 
 files_to_run = [
     'EDA.py',
+    'logistic_regression.py',
+    'neural_network.py',
     'random_forest_model.py',
+    'svm.ipynb',
     'tbfn.py'
     'nn.py',
+    'neural_network.py',
     'clean_RF_features.py',
+    'stability_tbfn.py',
+    'cb.py',
+    'interpretability.py',
     'ml_models/lgbm.py',
     'ml_models/cb.py',
     'ml_models/xgb.py',
