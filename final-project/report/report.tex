@@ -537,51 +537,64 @@ As shown, the model seems to be stable under model choices. However, we might no
 data perturbations. Therefore, we will proceed to the next section to analyze the data perturbation.
 
 \subsection{Data Perturbation}
-Note: We've tried doing data perturbation using LightGBM, but the results are not really interesting enough (the f1-score and accuracy are not dropping drastically). From here we went with TabPFN method (we also just want to use something different as well to see how it performs), which shows something more interesting in terms of the performance. \\
+Note: We've tried doing data perturbation using LightGBM, but the results are not really interesting enough 
+(the f1-score and accuracy are not dropping drastically). From here we went with TabPFN method 
+(we also just want to use something different as well to see how it performs), which shows something 
+more interesting in terms of the performance. \\
 
-The setup of data perturbation is mainly comparing the inline distribution disparity between different sites. However, this implies that the sites are independent and relies on the same proportion of prevalence (or imbalance), which might not be true in real world. Therefore, we implemented a stability check with the training on high prevalence proportion and test on the sites with least cases, to see if we can get the same behavior. We retrained our model and test it on the least 5 sites on the data. The number of 5 sites for testing is a \textbf{judgment call}, as the number can fluctuate as the data availability becomes scarce or not.  
+The setup of data perturbation is mainly comparing the inline distribution disparity between different sites. 
+However, this implies that the sites are independent and relies on the same proportion of prevalence (or imbalance), 
+which might not be true in real world. Therefore, we implemented a stability check with the training on high prevalence 
+proportion and test on the sites with least cases, to see if we can get the same behavior. We retrained our model and test 
+it on the least 5 sites on the data. The number of 5 sites for testing is a \textbf{judgment call}, as the number can 
+fluctuate as the data availability becomes scarce or not.  
 
 The confusion matrix is shown below:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{plots/tabpfn_confusion_matrix_stab1.pdf}
-    \caption{Stability on prevalence for TabPFN}
+    \includegraphics[width=0.5\linewidth]{../plots/tabpfn_confusion_matrix_stab1.pdf}
+    \caption{Stability on prevalence}
     \label{fig:stability1}
 \end{figure}
 
-As observed, the confusion matrix greatly decrease the number on prediction, as our class weights used before does not correspond to the reality of the testing sites. However, if we observed the metrics as shown below:
-
-\begin{table}[H]
-\centering
-\footnotesize
-\begin{tabular}{lllll}
-\toprule
-\textbf{Sensitivity} & \textbf{Specificity} & \textbf{Accuracy} &  \textbf{F1-Score}\\
-\midrule
-0.075 & 0.9496 & 0.9325 & 0.6865  \\
-\bottomrule
-\end{tabular}
-\caption{Performance of Transformer Implementation}%
-\end{table}
+As observed, the confusion matrix greatly decrease the number on prediction, as our class weights 
+used before does not correspond to the reality of the testing sites. This initial verification can help us 
+observe the importance of our assumptions. Therefore, we implemented more investigation by increasing
+the number of sites with least proportion out of our training set. The results are shown below:
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{plots/tabpfn_stability1_metrics.pdf}
+    \includegraphics[width=0.5\linewidth]{../plots/tabpfn_stability1_metrics.pdf}
     \caption{Stability on prevalence: Metrics changing}
     \label{fig:stab-1}
 \end{figure}
 
 As shown in Figure \ref{fig:stab-1}, the metrics certainly decreases as the prevalence is taking into consideration. However, still our model predicts fairly good estimations of the predicted value, maintaining the specificity and FNR.
 
-Our next data perturbation considers the sub sampling problem of the data. The reality explanation would reference to a medical site where the information is still ongoing, as the number of patients are increasing, and we might not be able to train our model with the full dataset on a given year. Therefore, it is important to observe if the model is stable enough to still reproduce good results even at this criteria. 
+Our next data perturbation considers the sub sampling problem of the data. The reality explanation would reference to a medical site where the information is still ongoing, as the number of patients are increasing, and we might not be able to train our model with the full dataset on a given year. 
+Therefore, it is important to observe if the model is stable enough to still reproduce good results even at this criteria. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.5\linewidth]{plots/tabpfn_stability2_metrics.pdf}
+    \includegraphics[width=0.5\linewidth]{../plots/tabpfn_stability2_metrics.pdf}
     \caption{Stability on sub sampling: Metrics changing}
     \label{fig:enter-label}
 \end{figure}
+
+Additionally, an additional stability analysis have been made, by changing the sampling of the data based on SMOOTE, to see if the model is 
+still able to generalize well. The results are shown below:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\linewidth]{../plots/tabpfn_stability3_metrics.pdf}
+    \caption{Stability on SMOTE: Metrics changing}
+    \label{fig:enter-label}
+\end{figure}
+
+As shown, the proportion of the data does not affect the model's performance, as the model is still able to generalize well. Although,
+an initial drop of the performance is observed. 
+
 
 \section{Reality Check}
 

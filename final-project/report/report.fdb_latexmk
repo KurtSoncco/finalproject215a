@@ -1,15 +1,19 @@
 # Fdb version 4
-["bibtex report"] 1734554079.73766 "report.aux" "report.bbl" "report" 1734554082.50876 0
+["bibtex report"] 1734554187.61058 "report.aux" "report.bbl" "report" 1734554190.2803 0
   "./references.bib" 1734506421 9186 280dad2ad54b92169a231a19cd59b78f ""
   "C:/Users/kurt-/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/unsrt.bst" 1291864736 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "report.aux" 1734554081 11856 88cd5a7b8f9b0927b4b8b40c9808508f "pdflatex"
+  "report.aux" 1734554189 11919 de23bc0c02fdc7f454b788514247cdcf "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
   (rewritten before read)
-["pdflatex"] 1734554080.18885 "c:/Users/kurt-/Documents/GitHub/finalproject215a/final-project/report/report.tex" "report.pdf" "report" 1734554082.50936 0
+["pdflatex"] 1734554188.0038 "c:/Users/kurt-/Documents/GitHub/finalproject215a/final-project/report/report.tex" "report.pdf" "report" 1734554190.28089 0
   "../plots/NN_loss_graph.png" 1734245276 48525 1c74c821619c4c2a0a1dc185ccc8504a ""
+  "../plots/tabpfn_confusion_matrix_stab1.pdf" 1734245276 14087 2ea6393609759475dbed8b80127d24ba ""
   "../plots/tabpfn_decision_curve.pdf" 1734238336 14413 2f2c6ed34b4d958be9ee4ce08b41e2e8 ""
+  "../plots/tabpfn_stability1_metrics.pdf" 1734245276 14445 8d29c93cd894c92dfabb0162c16ad9e9 ""
+  "../plots/tabpfn_stability2_metrics.pdf" 1734235554 13810 568e07f633ebed5ba22dff7d93f9775f ""
+  "../plots/tabpfn_stability3_metrics.pdf" 1734236123 15727 dfa3752a8ca30c69461e308d4c81ae50 ""
   "C:/Users/kurt-/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1728965223 278015 b5ae8789d05c9394f564dcef5be6e51a ""
   "C:/Users/kurt-/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1725306881 24225045 8dd2b22dd6ff60b508e3d348c1af0079 ""
   "C:/Users/kurt-/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1001775420 2900 1537cc8184ad1792082cd229ecc269f4 ""
@@ -95,7 +99,7 @@
   "C:/Users/kurt-/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1657800696 9714 ba3194bd52c8499b3f1e3eb91d409670 ""
   "C:/Users/kurt-/AppData/Local/Programs/MiKTeX/tex/latex/titlesec/titlesec.sty" 1699094857 48766 0b93839be28e9744a24c45075c75b2e2 ""
   "C:/Users/kurt-/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Users/kurt-/Documents/GitHub/finalproject215a/final-project/report/report.tex" 1734554076 41025 97c930b248f45fe0e30ad8e51879b0a3 ""
+  "c:/Users/kurt-/Documents/GitHub/finalproject215a/final-project/report/report.tex" 1734554184 41528 b66fef3b08442b40ea6a46a5514e5bc3 ""
   "plots/1dcnn_confusion_matrix.pdf" 1734506420 15044 5fb6219e587641c79cac2d7b954f7430 ""
   "plots/cases_by_gcs.pdf" 1734506420 12884 df91e96711f4aaae4f9b1c2668e73607 ""
   "plots/cases_per_site.pdf" 1734506421 13279 5b5eb057b784510ed6ff3e48671829de ""
@@ -112,14 +116,11 @@
   "plots/random_forest_confusion_matrix.pdf" 1734506421 13683 ddf0dab8c1d7648fed0ee9efc524ccc6 ""
   "plots/svm_decision.png" 1734506421 342012 3929900dd5cde0fd5c5c4c89c5bae370 ""
   "plots/tabpfn_confusion_matrix.pdf" 1734506421 13564 7a8f1051ff8c43c3c4b32945d31bfc0f ""
-  "plots/tabpfn_confusion_matrix_stab1.pdf" 1734506421 14087 2ea6393609759475dbed8b80127d24ba ""
-  "plots/tabpfn_stability1_metrics.pdf" 1734506421 14445 8d29c93cd894c92dfabb0162c16ad9e9 ""
-  "plots/tabpfn_stability2_metrics.pdf" 1734506421 13812 0527ec7ac6dc3542e027752d61ed3c2e ""
   "plots/xgboost_confusion_matrix.pdf" 1734506421 12765 72e7bd047196ffb29429acef0ade8491 ""
-  "report.aux" 1734554081 11856 88cd5a7b8f9b0927b4b8b40c9808508f "pdflatex"
-  "report.bbl" 1734554080 3013 43a65a2ea8ba9375e06d7fff8231f804 "bibtex report"
-  "report.out" 1734554081 3481 b6f7424c0c920ad727b813cd0b76fd0a "pdflatex"
-  "report.tex" 1734554076 41025 97c930b248f45fe0e30ad8e51879b0a3 ""
+  "report.aux" 1734554189 11919 de23bc0c02fdc7f454b788514247cdcf "pdflatex"
+  "report.bbl" 1734554187 3013 43a65a2ea8ba9375e06d7fff8231f804 "bibtex report"
+  "report.out" 1734554189 3481 b6f7424c0c920ad727b813cd0b76fd0a "pdflatex"
+  "report.tex" 1734554184 41528 b66fef3b08442b40ea6a46a5514e5bc3 ""
   (generated)
   "report.aux"
   "report.log"
