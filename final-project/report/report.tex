@@ -595,14 +595,33 @@ still able to generalize well. The results are shown below:
 As shown, the proportion of the data does not affect the model's performance, as the model is still able to generalize well. Although,
 an initial drop of the performance is observed. 
 
-
 \section{Reality Check}
 
 We have developed and evaluated several predictive models aimed at identifying the most effective approach for medical decision-making regarding patient immobilization. Our methodology involved exploring various feature reduction techniques to distill complex data into actionable insights, thereby facilitating informed decisions by medical practitioners. By focusing on the most relevant features, our models provide a concise and accurate assessment of whether immobilization is necessary.
 
-Notably, real-world hospital data often exhibits considerable diversity, which may not be fully captured by existing frameworks such as PECARN. Our model addresses this limitation by providing a data-driven summarization of key features, enabling hospitals to make more informed decisions. Furthermore, integrating our model with digital medical histories and emergency department (ED) signals has the potential to enhance adoption and improve patient outcomes.
+Notably, real-world hospital data often exhibits considerable diversity, which may not be fully captured by 
+existing frameworks such as PECARN. Our model addresses this limitation by providing a data-driven summarization
+ of key features, enabling hospitals to make more informed decisions. Furthermore, integrating our model with digital
+  medical histories and emergency department (ED) signals has the potential to enhance adoption and improve patient outcomes.
 
-Our model demonstrates improved sensitivity and specificity for false negatives (FN) compared to baseline models. However, it is essential to acknowledge that our approach relies on the assumption of low prevalence rates, which may not hold true in all clinical settings. To address this limitation, we conducted stability analyses, highlighting the need for feedback mechanisms to refine our model for extraordinary case scenarios. Ongoing collaboration and testing will be crucial in refining our model's performance and generalization.
+Our model demonstrates improved sensitivity and specificity for false negatives (FN) compared to baseline models. 
+However, it is essential to acknowledge that our approach relies on the assumption of low prevalence rates, 
+which may not hold true in all clinical settings. To address this limitation, we conducted stability analyses, 
+highlighting the need for feedback mechanisms to refine our model for extraordinary case scenarios. Ongoing 
+collaboration and testing will be crucial in refining our model's performance and generalization.
+
+To answer how our model would be use in a real wolrd scenario, we need to understand that the model have been 
+trained by a complete-knowledge dataset, implying we have all the information already at hand. Therefore, 
+our clinical decision rule model would be best suited when the patient is already in the hospital, or ED.
+The model would be very challenging to explain to a patient, since the model suffers from sufficient 
+explanability. However, we believe that the predicted output would be sufficient to reduce the time of the 
+patient on the hospital, which can be seen as a good outcome for them.
+
+Following the same line of thought, we believe that the best scenario for our model is a combined approach, 
+where the model informs the medical practitioner, and the medical practitioner makes the final decision. 
+We do not believe our model can replace the medical practitioner, as the model is not perfect, and the variables
+used are not always present in the patient's case.
+
 
 \newpage
 \section{Bibliography}
