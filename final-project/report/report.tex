@@ -420,7 +420,8 @@ equivariance property of CNNs, the model can capture locational features between
 columns inside the dataset. Since a lot of our data has very high correlation to its neighboring column, 
 the model can utilize this information and do classifications based on that.
 
-There's a good amount of stuff still open to further discussion and testing, including the use of Max Pooling to do dimension reduction, number of channels for the convolution layers and the kernel size. 
+There's a good amount of stuff still open to further discussion and testing, including the use of 
+Max Pooling to do dimension reduction, number of channels for the convolution layers and the kernel size. 
 So far we've selected the parameters based on performance of F1-score on the validation set.
 \begin{table}[H]
 \centering
@@ -500,7 +501,7 @@ LightGBM does not assume the closer a node is to the root, the more important it
 
 \section{Interpretability}
 
-Additinally, we have observed the use of the Transformer as a feasible model for the decision rule. This section will address if our model is interpretable to provide
+Additionally, we have observed the use of the Transformer as a feasible model for the decision rule. This section will address if our model is interpretable to provide
 trust and confidence to the medical practitioners. The model is based on the Tabular Prediction Framework (TabPfn) \cite{hollmann2022tabpfn}, 
 which relies on the prior training on sequential data. However, as any Deep Learning model, the model is a black box,
 and it is hard to interpret the features and its importance. 
@@ -515,7 +516,7 @@ In this case, we will implement a Decision Curve Analysis (DCA) to understand th
     \label{fig:dca}
 \end{figure}
 
-This plot helps use realize how the model improves for intervention all the time, where the model inferes that even if the threshold is high, it is smart to not 
+This plot helps use realize how the model improves for intervention all the time, where the model infers that even if the threshold is high, it is smart to not 
 always decide to immobilize the patient \cite{vickers2019simple}. In this case, the threshold 
 represents the amount of worry the model has to have to decide to immobilize the patient. Therefore, this graph 
 can help the medical practitioners to understand the model's decision making process.
@@ -632,11 +633,11 @@ which may not hold true in all clinical settings. To address this limitation, we
 highlighting the need for feedback mechanisms to refine our model for extraordinary case scenarios. Ongoing 
 collaboration and testing will be crucial in refining our model's performance and generalization.
 
-To answer how our model would be use in a real wolrd scenario, we need to understand that the model have been 
+To answer how our model would be use in a real world scenario, we need to understand that the model have been 
 trained by a complete-knowledge dataset, implying we have all the information already at hand. Therefore, 
 our clinical decision rule model would be best suited when the patient is already in the hospital, or ED.
 The model would be very challenging to explain to a patient, since the model suffers from sufficient 
-explanability. However, we believe that the predicted output would be sufficient to reduce the time of the 
+explainability. However, we believe that the predicted output would be sufficient to reduce the time of the 
 patient on the hospital, which can be seen as a good outcome for them.
 
 Following the same line of thought, we believe that the best scenario for our model is a combined approach, 
