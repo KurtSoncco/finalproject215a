@@ -68,4 +68,16 @@ Noah Hollmann, Samuel M{\"u}ller, Katharina Eggensperger, and Frank Hutter.
   problems in a second.
 \newblock {\em arXiv preprint arXiv:2207.01848}, 2022.
 
+\bibitem{rundel2024interpretable}
+David Rundel, Julius Kobialka, Constantin von Crailsheim, Matthias Feurer,
+  Thomas Nagler, and David R{\"u}gamer.
+\newblock Interpretable machine learning for tabpfn.
+\newblock In {\em World Conference on Explainable Artificial Intelligence},
+  pages 465--476. Springer, 2024.
+
+\bibitem{vickers2019simple}
+Andrew~J Vickers, Ben van Calster, and Ewout~W Steyerberg.
+\newblock A simple, step-by-step guide to interpreting decision curve analysis.
+\newblock {\em Diagnostic and prognostic research}, 3:1--8, 2019.
+
 \end{thebibliography}

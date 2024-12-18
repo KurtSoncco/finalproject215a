@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex report"] 1734554187.61058 "report.aux" "report.bbl" "report" 1734554218.53631 0
-  "./references.bib" 1734506421 9186 280dad2ad54b92169a231a19cd59b78f ""
+["bibtex report"] 1734554282.6315 "report.aux" "report.bbl" "report" 1734554282.96718 0
+  "./references.bib" 1734554281 10275 d40cfa63a471742d42d6f9393755401a ""
   "C:/Users/kurt-/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/unsrt.bst" 1291864736 18030 1376b4b231b50c66211e47e42eda2875 ""
-  "report.aux" 1734554217 11919 de23bc0c02fdc7f454b788514247cdcf "pdflatex"
+  "report.aux" 1734554272 11989 3ff1627fca10f5145451180bba4fd590 "pdflatex"
   (generated)
   "report.bbl"
   "report.blg"
   (rewritten before read)
-["pdflatex"] 1734554216.02336 "c:/Users/kurt-/Documents/GitHub/finalproject215a/final-project/report/report.tex" "report.pdf" "report" 1734554218.53714 0
+["pdflatex"] 1734554270.88205 "c:/Users/kurt-/Documents/GitHub/finalproject215a/final-project/report/report.tex" "report.pdf" "report" 1734554282.96757 0
   "../plots/NN_loss_graph.png" 1734245276 48525 1c74c821619c4c2a0a1dc185ccc8504a ""
   "../plots/tabpfn_confusion_matrix_stab1.pdf" 1734245276 14087 2ea6393609759475dbed8b80127d24ba ""
   "../plots/tabpfn_decision_curve.pdf" 1734238336 14413 2f2c6ed34b4d958be9ee4ce08b41e2e8 ""
@@ -117,9 +117,9 @@
   "plots/svm_decision.png" 1734506421 342012 3929900dd5cde0fd5c5c4c89c5bae370 ""
   "plots/tabpfn_confusion_matrix.pdf" 1734506421 13564 7a8f1051ff8c43c3c4b32945d31bfc0f ""
   "plots/xgboost_confusion_matrix.pdf" 1734506421 12765 72e7bd047196ffb29429acef0ade8491 ""
-  "report.aux" 1734554217 11919 de23bc0c02fdc7f454b788514247cdcf "pdflatex"
-  "report.bbl" 1734554187 3013 43a65a2ea8ba9375e06d7fff8231f804 "bibtex report"
-  "report.out" 1734554217 3481 b6f7424c0c920ad727b813cd0b76fd0a "pdflatex"
+  "report.aux" 1734554272 11989 3ff1627fca10f5145451180bba4fd590 "pdflatex"
+  "report.bbl" 1734554282 3572 f0bbf144232c12e55a7df23e66d3df9d "bibtex report"
+  "report.out" 1734554272 3481 b6f7424c0c920ad727b813cd0b76fd0a "pdflatex"
   "report.tex" 1734554215 42541 10a882a258f10ca5a18f323f4a81e227 ""
   (generated)
   "report.aux"
