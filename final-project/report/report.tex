@@ -131,8 +131,21 @@ While the F1 score is our primary metric, we acknowledge that no single metric f
 
 \subsection{Data splitting and resampling}
 
-The dataset, comprising diagnoses from multiple patients across different locations and time points, prompted us to consider the optimal granularity for analysis. Notably, the Site, SubjectID, and CaseID columns were consistently present across all data points, without requiring additional cleaning or preprocessing. Among these columns, the Site variable captured spatial information, categorizing patients into distinct emergency department (ED) locations. Different sites have inherent bias injected upon while during the data collection process, resulting in a ditributional shift in the data. Thus making sure site information is randomized across the training and validation set is crucial. This is further discussed in the stabiltiy test section, which we analyzed the feasibility of our model generalizing across different sites.
+The dataset, comprising diagnoses from multiple patients across different locations and time points, enlightened us to 
+consider the optimal granularity for analysis. Notably, the Site, SubjectID, and CaseID columns were consistently present 
+across all data points, without requiring additional cleaning or preprocessing. Among these columns, the Site variable 
+captured spatial information, categorizing patients into distinct emergency department (ED) locations. Different sites 
+have inherent bias, resulting in a distributional shift in the data. 
+Thus, making sure site information is randomized across the training and validation set is crucial. This is further 
+discussed in the stability test section, which we analyzed the feasibility of our model generalizing across different sites.
 
+Additionally, we've used SMOTE to oversample the minority class, creating a balance between the two classes. 
+SMOTE is a popular technique for oversampling the minority class, which generates synthetic samples by interpolating 
+between the existing samples of the minority class. However, we understand that the model can be inherently biased 
+toward resampling techniques. Therefore, we conducted also a stability analysis of the sampling technique chosen to 
+ensure the model's robustness across different data distributions.
+
+% There is no section on analysis of K folds
 The implementation of the data splitting was mostly text-book style train test split with scikit-learn. While training the model, we've also used K-Fold cross validation to make sure the model is not overfitting on the training data and our model is using the best set of hyperparameters.
 
 The purpose for resampling the data is to make sure the model is not biased towards the majority class. Aparently 90\% of the cases are Negative, making it hard for the model to generalize on the minority class. We've used SMOTE to oversample the minority class, creating a balance between the two classes.
