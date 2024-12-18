@@ -2,7 +2,6 @@ We have all agreed on these attributions:
 
 Kurt Soncco worked on:
 - EDA and cleaning process
-- Logistic PCA and Logistic Regression (Not included in the report)
 - Revision of State of the Art papers
 - Stability tests
 - Train and test split
